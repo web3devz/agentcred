@@ -1,0 +1,9 @@
+{
+  "name": "@agentcred/web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo 'next dev (install deps first)'",
+    "build": "echo 'next build'"
+  }
+}

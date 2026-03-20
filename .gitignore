@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+dist/
+build/
+.next/
+out/
+coverage/
+.cache/
+*.log
+.DS_Store
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+artifacts/
+cache/
+typechain-types/

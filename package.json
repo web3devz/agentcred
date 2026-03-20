@@ -1,0 +1,11 @@
+{
+  "name": "agentcred",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "echo 'Use app-level dev scripts'",
+    "build": "echo 'Use app-level build scripts'",
+    "test": "echo 'Use app-level test scripts'"
+  }
+}
