@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { createHash } from 'node:crypto';
+import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
 
 const PORT = Number(process.env.PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -56,8 +57,9 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && pathname === '/jobs') {
       const body = await readBody(req);
       const { title, client, agent, amount, milestones = [] } = body;
-      if (!title || !client || !agent || !amount) {
-        return json(res, 400, { error: 'missing_fields', required: ['title', 'client', 'agent', 'amount'] });
+      const check = requireFields(JobCreateSchema, body);
+      if (!check.ok) {
+        return json(res, 400, { error: 'missing_fields', required: JobCreateSchema.required, missing: check.missing });
       }
 
       const id = db.nextJobId++;
@@ -96,9 +98,14 @@ const server = http.createServer(async (req, res) => {
       if (!job) return notFound(res);
 
       const body = await readBody(req);
+      const receiptCheck = requireFields(ReceiptSchema, body);
+      if (!receiptCheck.ok) {
+        return json(res, 400, { error: 'missing_fields', required: ReceiptSchema.required, missing: receiptCheck.missing });
+      }
+
       const receipt = {
-        artifactUrl: body.artifactUrl || '',
-        summary: body.summary || '',
+        artifactUrl: body.artifactUrl,
+        summary: body.summary,
         logs: body.logs || [],
         submittedAt: new Date().toISOString(),
       };
@@ -120,6 +127,11 @@ const server = http.createServer(async (req, res) => {
         signalScore: 78,
       };
 
+      const payloadCheck = requireFields(VerifierRequestSchema, payload);
+      if (!payloadCheck.ok) {
+        return json(res, 500, { error: 'invalid_verifier_payload', missing: payloadCheck.missing });
+      }
+
       const verifierRes = await fetch(VERIFIER_URL, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -131,6 +143,11 @@ const server = http.createServer(async (req, res) => {
       }
 
       const verdict = await verifierRes.json();
+      const verdictCheck = requireFields(VerifierResultSchema, verdict);
+      if (!verdictCheck.ok) {
+        return json(res, 502, { error: 'invalid_verifier_response', missing: verdictCheck.missing });
+      }
+
       job.score = verdict.score;
       job.verdict = verdict.verdict;
       job.status = verdict.verdict === 'pass' ? 'APPROVED' : 'REVIEW';

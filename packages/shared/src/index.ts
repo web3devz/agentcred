@@ -1,1 +1,2 @@
-export const name = '@agentcred/shared';
+export * from './types';
+export * from './schemas';

@@ -6,7 +6,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 1. **Build plan lock-in + API vertical slice** (jobs/receipts/scoring/release) ✅
 2. Contract v1 interfaces + events + role guards
 3. Foundry/JS deploy scripts for Base Sepolia ✅
-4. Shared schemas (Job/Milestone/Receipt/VerifierResult)
+4. Shared schemas (Job/Milestone/Receipt/VerifierResult) ✅
 5. Frontend scaffold with core pages and API integration layer
 
 ## Phase B — Core Product Loop (Pushes 6-12)
@@ -23,7 +23,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 14. OpenServ multi-agent route (planner/worker/verifier hooks)
 15. Arkhai-compatible escrow extension points
 16. Octant evaluation report format (public-goods metrics view)
-17. ampersend payout adapter wiring
+17. MetaMask Delegations adapter for permissioned agent actions
 18. Status gasless transaction path (adapter + docs)
 19. ERC-8004 receipts mapping + Base Agent Services registration docs
 
