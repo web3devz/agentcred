@@ -7,7 +7,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 2. Contract v1 interfaces + events + role guards
 3. Foundry/JS deploy scripts for Base Sepolia ✅
 4. Shared schemas (Job/Milestone/Receipt/VerifierResult) ✅
-5. Frontend scaffold with core pages and API integration layer
+5. Frontend scaffold with core pages and API integration layer ✅
 
 ## Phase B — Core Product Loop (Pushes 6-12)
 6. Create job + milestone flow in UI
