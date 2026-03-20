@@ -10,7 +10,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 5. Frontend scaffold with core pages and API integration layer ✅
 
 ## Phase B — Core Product Loop (Pushes 6-12)
-6. Create job + milestone flow in UI
+6. Create job + milestone flow in UI ✅
 7. Escrow interaction wiring (fund/create/release)
 8. Worker queue skeleton with orchestration states
 9. OpenServ adapter (task request + status polling interface)

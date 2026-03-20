@@ -2,7 +2,7 @@ import http from 'node:http';
 import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
 
-const PORT = Number(process.env.PORT || 3001);
+const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
 
 const db = {
@@ -28,7 +28,7 @@ async function readBody(req) {
       if (!raw) return resolve({});
       try {
         resolve(JSON.parse(raw));
-      } catch (e) {
+      } catch {
         reject(new Error('invalid_json'));
       }
     });
@@ -45,6 +45,15 @@ function parseId(pathname) {
   return Number(parts[1]);
 }
 
+function parseMilestoneId(pathname) {
+  const parts = pathname.split('/').filter(Boolean);
+  return Number(parts[3]);
+}
+
+function allMilestonesReleased(job) {
+  return job.milestones.every((m) => m.status === 'RELEASED');
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const { pathname } = url;
@@ -56,19 +65,35 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'POST' && pathname === '/jobs') {
       const body = await readBody(req);
-      const { title, client, agent, amount, milestones = [] } = body;
       const check = requireFields(JobCreateSchema, body);
       if (!check.ok) {
         return json(res, 400, { error: 'missing_fields', required: JobCreateSchema.required, missing: check.missing });
       }
 
+      const milestonesIn = Array.isArray(body.milestones) && body.milestones.length
+        ? body.milestones
+        : [{ title: 'Default Milestone', amount: Number(body.amount) }];
+
+      const milestones = milestonesIn.map((m, idx) => ({
+        id: idx,
+        title: m.title || `Milestone ${idx + 1}`,
+        amount: Number(m.amount || 0),
+        status: 'PENDING',
+        receipt: null,
+        score: null,
+        verdict: null,
+      }));
+
+      const totalAmount = milestones.reduce((s, m) => s + m.amount, 0);
+      if (totalAmount <= 0) return json(res, 400, { error: 'invalid_milestones_total' });
+
       const id = db.nextJobId++;
       const job = {
         id,
-        title,
-        client,
-        agent,
-        amount: Number(amount),
+        title: body.title,
+        client: body.client,
+        agent: body.agent,
+        amount: totalAmount,
         status: 'FUNDED',
         milestones,
         receipt: null,
@@ -92,10 +117,13 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, job);
     }
 
-    if (req.method === 'POST' && /^\/jobs\/\d+\/receipt$/.test(pathname)) {
-      const id = parseId(pathname);
-      const job = db.jobs.get(id);
+    if (req.method === 'POST' && /^\/jobs\/\d+\/milestones\/\d+\/receipt$/.test(pathname)) {
+      const jobId = parseId(pathname);
+      const milestoneId = parseMilestoneId(pathname);
+      const job = db.jobs.get(jobId);
       if (!job) return notFound(res);
+      const m = job.milestones[milestoneId];
+      if (!m) return json(res, 404, { error: 'milestone_not_found' });
 
       const body = await readBody(req);
       const receiptCheck = requireFields(ReceiptSchema, body);
@@ -109,24 +137,25 @@ const server = http.createServer(async (req, res) => {
         logs: body.logs || [],
         submittedAt: new Date().toISOString(),
       };
-      receipt.hash = receiptHash(receipt);
-      job.receipt = receipt;
+      receipt.hash = receiptHash({ jobId, milestoneId, ...receipt });
+
+      m.receipt = receipt;
+      m.status = 'SUBMITTED';
       job.status = 'COMPLETED';
-      return json(res, 200, { id, receipt });
+
+      return json(res, 200, { jobId, milestoneId, receipt });
     }
 
-    if (req.method === 'POST' && /^\/jobs\/\d+\/score$/.test(pathname)) {
-      const id = parseId(pathname);
-      const job = db.jobs.get(id);
+    if (req.method === 'POST' && /^\/jobs\/\d+\/milestones\/\d+\/score$/.test(pathname)) {
+      const jobId = parseId(pathname);
+      const milestoneId = parseMilestoneId(pathname);
+      const job = db.jobs.get(jobId);
       if (!job) return notFound(res);
-      if (!job.receipt) return json(res, 400, { error: 'receipt_required' });
+      const m = job.milestones[milestoneId];
+      if (!m) return json(res, 404, { error: 'milestone_not_found' });
+      if (!m.receipt) return json(res, 400, { error: 'receipt_required' });
 
-      const payload = {
-        jobId: job.id,
-        receiptHash: job.receipt.hash,
-        signalScore: 78,
-      };
-
+      const payload = { jobId, milestoneId, receiptHash: m.receipt.hash, signalScore: 78 };
       const payloadCheck = requireFields(VerifierRequestSchema, payload);
       if (!payloadCheck.ok) {
         return json(res, 500, { error: 'invalid_verifier_payload', missing: payloadCheck.missing });
@@ -137,36 +166,65 @@ const server = http.createServer(async (req, res) => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
-      if (!verifierRes.ok) {
-        return json(res, 502, { error: 'verifier_error', status: verifierRes.status });
-      }
+      if (!verifierRes.ok) return json(res, 502, { error: 'verifier_error', status: verifierRes.status });
 
       const verdict = await verifierRes.json();
       const verdictCheck = requireFields(VerifierResultSchema, verdict);
-      if (!verdictCheck.ok) {
-        return json(res, 502, { error: 'invalid_verifier_response', missing: verdictCheck.missing });
-      }
+      if (!verdictCheck.ok) return json(res, 502, { error: 'invalid_verifier_response', missing: verdictCheck.missing });
 
-      job.score = verdict.score;
-      job.verdict = verdict.verdict;
-      job.status = verdict.verdict === 'pass' ? 'APPROVED' : 'REVIEW';
-      return json(res, 200, { id, verifier: verdict });
+      m.score = verdict.score;
+      m.verdict = verdict.verdict;
+      m.status = verdict.verdict === 'pass' ? 'APPROVED' : 'SUBMITTED';
+
+      return json(res, 200, { jobId, milestoneId, verifier: verdict });
     }
 
+    if (req.method === 'POST' && /^\/jobs\/\d+\/milestones\/\d+\/release$/.test(pathname)) {
+      const jobId = parseId(pathname);
+      const milestoneId = parseMilestoneId(pathname);
+      const job = db.jobs.get(jobId);
+      if (!job) return notFound(res);
+      const m = job.milestones[milestoneId];
+      if (!m) return json(res, 404, { error: 'milestone_not_found' });
+      if (m.status !== 'APPROVED') return json(res, 400, { error: 'milestone_not_approved', status: m.status });
+
+      m.status = 'RELEASED';
+
+      const prev = db.reputation.get(job.agent) || 0;
+      const next = Math.min(1000, prev + Math.max(1, Math.floor((m.score || 70) / 10)));
+      db.reputation.set(job.agent, next);
+
+      if (allMilestonesReleased(job)) {
+        job.status = 'RELEASED';
+        job.releasedAt = new Date().toISOString();
+      } else {
+        job.status = 'FUNDED';
+      }
+
+      return json(res, 200, {
+        jobId,
+        milestoneId,
+        payout: 'released',
+        milestoneAmount: m.amount,
+        reputation: { agent: job.agent, score: next },
+      });
+    }
+
+    // Backward-compatible single-step routes
+    if (req.method === 'POST' && /^\/jobs\/\d+\/receipt$/.test(pathname)) {
+      const id = parseId(pathname);
+      req.url = `/jobs/${id}/milestones/0/receipt`;
+      return server.emit('request', req, res);
+    }
+    if (req.method === 'POST' && /^\/jobs\/\d+\/score$/.test(pathname)) {
+      const id = parseId(pathname);
+      req.url = `/jobs/${id}/milestones/0/score`;
+      return server.emit('request', req, res);
+    }
     if (req.method === 'POST' && /^\/jobs\/\d+\/release$/.test(pathname)) {
       const id = parseId(pathname);
-      const job = db.jobs.get(id);
-      if (!job) return notFound(res);
-      if (job.status !== 'APPROVED') {
-        return json(res, 400, { error: 'job_not_approved', status: job.status });
-      }
-      job.status = 'RELEASED';
-      job.releasedAt = new Date().toISOString();
-      const prev = db.reputation.get(job.agent) || 0;
-      const next = Math.min(1000, prev + Math.max(1, Math.floor((job.score || 70) / 10)));
-      db.reputation.set(job.agent, next);
-      return json(res, 200, { id, payout: 'released', reputation: { agent: job.agent, score: next } });
+      req.url = `/jobs/${id}/milestones/0/release`;
+      return server.emit('request', req, res);
     }
 
     if (req.method === 'GET' && pathname.startsWith('/reputation/')) {
