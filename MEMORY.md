@@ -53,6 +53,17 @@ Persistent working memory (user requested saving context as of now).
   3. 24–48h MVP build plan
   4. pitch + demo script
 
+## Latest Saved Context (2026-03-20 UTC)
+
+- User supplied 3 high-overlap hackathon ideas targeting: EigenCompute, OpenServ, Arkhai, Octant, ampersend, Status, Base/ERC-8004.
+- Ideas captured:
+  1. AgentCred — Verifiable Agent Reputation + Escrow Hiring Network
+  2. GrantIntel Swarm — Public-Goods Due-Diligence Agent
+  3. GaslessOps Copilot — Autonomous Onchain Operations Agent
+- Joint conclusion: **AgentCred** selected as strongest podium candidate (best multi-track fit + fastest credible MVP).
+- Assistant produced refined architecture, 48-hour build plan, and judge track-mapping checklist for AgentCred.
+- User confirmation message: "These" (interpreted as acceptance of the finalized shortlist + winning pick context).
+
 ## Update Rule Going Forward
 
 When user says “save this”, append structured updates here and refresh USER.md if personal preferences changed.
