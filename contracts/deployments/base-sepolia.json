@@ -1,0 +1,11 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "deployer": "0x4C92BF08f4672E974dE4dc01806150a977853BfE",
+  "timestamp": "2026-03-20T22:35:22.758Z",
+  "contracts": {
+    "EscrowAgreement": "0xE97aF241cE0c46bc69d6d447D778b5845bDeAE68",
+    "ReputationRegistry": "0x6C59cE908532E9c9999a00cD651313f730044f30",
+    "AgentReceiptRegistry": "0xcb80182d740F4df06e838802adbd25C169D1bb34"
+  }
+}

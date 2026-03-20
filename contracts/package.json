@@ -4,9 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "compile": "node script/compile.js",
     "deploy:base-sepolia": "node script/deploy.base-sepolia.js"
   },
   "dependencies": {
-    "ethers": "^6.13.2"
+    "dotenv": "^17.3.1",
+    "ethers": "^6.13.2",
+    "solc": "^0.8.34"
   }
 }

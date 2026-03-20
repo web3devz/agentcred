@@ -23,10 +23,10 @@ function loadArtifact(name) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
 
-async function deployFromArtifact(name, signer, args = []) {
+async function deployFromArtifact(name, signer, args = [], overrides = {}) {
   const artifact = loadArtifact(name);
   const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer);
-  const contract = await factory.deploy(...args);
+  const contract = await factory.deploy(...args, overrides);
   await contract.waitForDeployment();
   const address = await contract.getAddress();
   return { address, txHash: contract.deploymentTransaction()?.hash };
@@ -44,13 +44,24 @@ async function main() {
     throw new Error('Not Base Sepolia (expected chainId 84532)');
   }
 
-  const escrow = await deployFromArtifact('EscrowAgreement', signer);
+  let nonce = await provider.getTransactionCount(signer.address, 'pending');
+  const feeData = await provider.getFeeData();
+  const maxFeePerGas = feeData.maxFeePerGas ? feeData.maxFeePerGas * 2n : undefined;
+  const maxPriorityFeePerGas = feeData.maxPriorityFeePerGas ? feeData.maxPriorityFeePerGas * 2n : undefined;
+
+  const txOverrides = (n) => ({
+    nonce: n,
+    ...(maxFeePerGas ? { maxFeePerGas } : {}),
+    ...(maxPriorityFeePerGas ? { maxPriorityFeePerGas } : {})
+  });
+
+  const escrow = await deployFromArtifact('EscrowAgreement', signer, [], txOverrides(nonce++));
   console.log('EscrowAgreement:', escrow.address, 'tx=', escrow.txHash);
 
-  const reputation = await deployFromArtifact('ReputationRegistry', signer);
+  const reputation = await deployFromArtifact('ReputationRegistry', signer, [], txOverrides(nonce++));
   console.log('ReputationRegistry:', reputation.address, 'tx=', reputation.txHash);
 
-  const receipts = await deployFromArtifact('AgentReceiptRegistry', signer);
+  const receipts = await deployFromArtifact('AgentReceiptRegistry', signer, [], txOverrides(nonce++));
   console.log('AgentReceiptRegistry:', receipts.address, 'tx=', receipts.txHash);
 
   const deployed = {
