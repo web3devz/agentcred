@@ -1,0 +1,12 @@
+{
+  "name": "@agentcred/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "deploy:base-sepolia": "node script/deploy.base-sepolia.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.2"
+  }
+}

@@ -5,7 +5,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 ## Phase A — Foundation (Pushes 1-5)
 1. **Build plan lock-in + API vertical slice** (jobs/receipts/scoring/release) ✅
 2. Contract v1 interfaces + events + role guards
-3. Foundry deploy scripts for Base Sepolia
+3. Foundry/JS deploy scripts for Base Sepolia ✅
 4. Shared schemas (Job/Milestone/Receipt/VerifierResult)
 5. Frontend scaffold with core pages and API integration layer
 
