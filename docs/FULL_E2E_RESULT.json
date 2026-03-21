@@ -18,12 +18,12 @@
       "logs": [
         "ok"
       ],
-      "submittedAt": "2026-03-21T07:01:12.845Z",
-      "hash": "d5a507fd2cc70c8bd6fbb595b9d7e5e6eb55544cac1a97c628f89cf4f1cac94c",
+      "submittedAt": "2026-03-21T07:06:12.453Z",
+      "hash": "4e2ddfa6cc7557342890954864fcebf0aa8c0020526987f064df508ba159a5a7",
       "erc8004": {
         "schema": "erc-8004",
         "version": "1.0.0",
-        "receiptId": "agentcred:1:0:d5a507fd2cc7",
+        "receiptId": "agentcred:1:0:4e2ddfa6cc75",
         "work": {
           "jobId": 1,
           "milestoneId": 0,
@@ -41,11 +41,11 @@
           "pinnedCid": null
         },
         "timestamps": {
-          "submittedAt": "2026-03-21T07:01:12.845Z"
+          "submittedAt": "2026-03-21T07:06:12.453Z"
         },
         "integrity": {
           "hashAlgo": "sha256",
-          "hash": "d5a507fd2cc70c8bd6fbb595b9d7e5e6eb55544cac1a97c628f89cf4f1cac94c"
+          "hash": "4e2ddfa6cc7557342890954864fcebf0aa8c0020526987f064df508ba159a5a7"
         }
       }
     }
@@ -56,8 +56,7 @@
     "verifier": {
       "verdict": "pass",
       "score": 78,
-      "signedBy": "tee-placeholder",
-      "receiptHash": "d5a507fd2cc70c8bd6fbb595b9d7e5e6eb55544cac1a97c628f89cf4f1cac94c"
+      "signedBy": "tee-placeholder"
     },
     "openserv": {
       "used": false,
@@ -75,6 +74,12 @@
     "reputation": {
       "agent": "agent1",
       "score": 7
+    },
+    "delegation": {
+      "required": false,
+      "checked": false,
+      "ok": null,
+      "error": null
     },
     "onchain": {
       "release": {

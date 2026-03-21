@@ -4,6 +4,7 @@ import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSc
 import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
 import { pinJsonToIpfs } from './clients/pinata.js';
 import { isOpenServConfigured, scoreReceiptWithOpenServ } from './clients/openserv.js';
+import { verifyDelegation, delegationEnvelope } from './clients/metamask-delegation.js';
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -88,6 +89,30 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.method === 'GET' && pathname === '/health') {
       return json(res, 200, { ok: true, service: 'agentcred-api' });
+    }
+
+    if (req.method === 'POST' && pathname === '/delegations/envelope') {
+      const body = await readBody(req);
+      const env = delegationEnvelope(
+        body.action,
+        body.resource,
+        body.delegator,
+        body.delegate,
+        Number(body.nonce || 0),
+        Number(body.ttlSec || 3600)
+      );
+      return json(res, 200, env);
+    }
+
+    if (req.method === 'POST' && pathname === '/delegations/verify') {
+      const body = await readBody(req);
+      const result = verifyDelegation({
+        delegation: body.delegation,
+        signature: body.signature,
+        expectedAction: body.expectedAction,
+        expectedResource: body.expectedResource,
+      });
+      return json(res, result.ok ? 200 : 400, result);
     }
 
     if (req.method === 'GET' && pathname === '/integrations/openserv/health') {
@@ -294,6 +319,23 @@ const server = http.createServer(async (req, res) => {
       if (!m) return json(res, 404, { error: 'milestone_not_found' });
       if (m.status !== 'APPROVED') return json(res, 400, { error: 'milestone_not_approved', status: m.status });
 
+      const body = await readBody(req);
+      const delegationEnforced = process.env.DELEGATION_ENFORCED === 'true';
+      let delegation = { required: delegationEnforced, checked: false, ok: null, error: null };
+      if (body?.delegation && body?.signature) {
+        const resource = `job:${jobId}:milestone:${milestoneId}:release`;
+        const vr = verifyDelegation({
+          delegation: body.delegation,
+          signature: body.signature,
+          expectedAction: 'release_milestone',
+          expectedResource: resource,
+        });
+        delegation = { ...delegation, checked: true, ok: vr.ok, error: vr.error || null, recovered: vr.recovered || null };
+        if (!vr.ok) return json(res, 400, { error: 'invalid_delegation', details: vr });
+      } else if (delegationEnforced) {
+        return json(res, 400, { error: 'delegation_required' });
+      }
+
       m.status = 'RELEASED';
 
       const prev = db.reputation.get(job.agent) || 0;
@@ -336,6 +378,7 @@ const server = http.createServer(async (req, res) => {
         payout: 'released',
         milestoneAmount: m.amount,
         reputation: { agent: job.agent, score: next },
+        delegation,
         onchain: {
           release: onchainRelease,
           reputation: onchainReputation,

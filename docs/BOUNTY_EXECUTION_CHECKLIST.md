@@ -24,8 +24,10 @@
 - [ ] At least one real orchestration action captured in logs
 
 ### MetaMask Delegations
-- [ ] Delegation verification endpoint implemented
-- [ ] Delegated action used for at least one protected operation
+- [x] Delegation verification endpoint implemented (`/delegations/verify`)
+- [x] Delegation envelope endpoint implemented (`/delegations/envelope`)
+- [x] Delegated action support added for protected release operation
+- [ ] Collect signed delegation evidence in docs for final submission
 
 ### Protocol Labs (ERC-8004)
 - [x] Receipt payload emitted in ERC-8004 structure
