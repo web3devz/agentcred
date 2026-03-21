@@ -1,0 +1,60 @@
+{
+  "webBuild": "ok",
+  "verifierHealth": {
+    "ok": true,
+    "service": "verifier-tee"
+  },
+  "apiHealth": {
+    "ok": true,
+    "service": "agentcred-api"
+  },
+  "jobId": 1,
+  "receipt": {
+    "jobId": 1,
+    "milestoneId": 0,
+    "receipt": {
+      "artifactUrl": "https://example.com/artifact",
+      "summary": "done",
+      "logs": [
+        "ok"
+      ],
+      "submittedAt": "2026-03-21T06:01:32.283Z",
+      "hash": "87061a028c17b5f14b36789ff2d31a55c73b8758a73d29612366514ce324b4f8"
+    }
+  },
+  "score": {
+    "jobId": 1,
+    "milestoneId": 0,
+    "verifier": {
+      "verdict": "pass",
+      "score": 78,
+      "signedBy": "tee-placeholder",
+      "receiptHash": "87061a028c17b5f14b36789ff2d31a55c73b8758a73d29612366514ce324b4f8"
+    }
+  },
+  "release": {
+    "jobId": 1,
+    "milestoneId": 0,
+    "payout": "released",
+    "milestoneAmount": 5,
+    "reputation": {
+      "agent": "agent1",
+      "score": 7
+    },
+    "onchain": {
+      "release": {
+        "skipped": true,
+        "reason": "onchain_not_configured"
+      },
+      "reputation": {
+        "skipped": true,
+        "reason": "onchain_not_configured"
+      }
+    }
+  },
+  "reputation": {
+    "agent": "agent1",
+    "score": 7
+  },
+  "workerOnce": "ok"
+}
