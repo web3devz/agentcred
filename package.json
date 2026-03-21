@@ -16,6 +16,7 @@
     "verify:e2e": "bash scripts/e2e-verify.sh"
   },
   "dependencies": {
+    "@openserv-labs/client": "^2.5.3",
     "ethers": "^6.16.0"
   },
   "devDependencies": {
