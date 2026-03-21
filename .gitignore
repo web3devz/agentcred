@@ -24,6 +24,9 @@ tls/certs/
 *.log
 seedstr_autoworker_cron.log
 
+# Local runtime state
+.runtime/
+
 # Local nested repos/submodules unless explicitly needed
 openserv-skills/
 
