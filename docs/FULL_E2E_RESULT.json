@@ -18,12 +18,12 @@
       "logs": [
         "ok"
       ],
-      "submittedAt": "2026-03-21T10:33:08.893Z",
-      "hash": "7fd5c02cbba9d2b4c6df125d1fcf1e5fbc382aba123ee3da77a10cfad2b086bd",
+      "submittedAt": "2026-03-21T11:07:37.505Z",
+      "hash": "1baae4ef9d7a71af9861050660e75f042decfd25b28eeb3b2385b1e2a17d4216",
       "erc8004": {
         "schema": "erc-8004",
         "version": "1.0.0",
-        "receiptId": "agentcred:1:0:7fd5c02cbba9",
+        "receiptId": "agentcred:1:0:1baae4ef9d7a",
         "work": {
           "jobId": 1,
           "milestoneId": 0,
@@ -41,11 +41,11 @@
           "pinnedCid": null
         },
         "timestamps": {
-          "submittedAt": "2026-03-21T10:33:08.893Z"
+          "submittedAt": "2026-03-21T11:07:37.505Z"
         },
         "integrity": {
           "hashAlgo": "sha256",
-          "hash": "7fd5c02cbba9d2b4c6df125d1fcf1e5fbc382aba123ee3da77a10cfad2b086bd"
+          "hash": "1baae4ef9d7a71af9861050660e75f042decfd25b28eeb3b2385b1e2a17d4216"
         }
       }
     }
@@ -57,7 +57,7 @@
       "verdict": "pass",
       "score": 78,
       "signedBy": "tee-placeholder",
-      "receiptHash": "7fd5c02cbba9d2b4c6df125d1fcf1e5fbc382aba123ee3da77a10cfad2b086bd"
+      "receiptHash": "1baae4ef9d7a71af9861050660e75f042decfd25b28eeb3b2385b1e2a17d4216"
     },
     "openserv": {
       "used": true,

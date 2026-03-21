@@ -2,7 +2,10 @@
   "name": "agentcred",
   "private": true,
   "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "echo 'Use app-level dev scripts'",
     "build": "node -e \"console.log('build-ok')\"",
