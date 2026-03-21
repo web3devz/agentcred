@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8443
 ENV NODE_ENV=production
-CMD ["node", "src/server.js"]
+CMD ["node", "apps/api/src/main.js"]
