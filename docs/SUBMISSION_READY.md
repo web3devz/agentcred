@@ -33,16 +33,12 @@
 
 ### ✅ Source Provenance (Complete)
 - Workflow: `Supply Chain Verification`
-- Run: https://github.com/web3devz/agentcred/actions/runs/23372859298
-- Evidence:
-  - SBOM artifact uploaded
-  - provenance attestation step passed
-  - SBOM attestation step passed
+- Evidence snapshot: `docs/PROVENANCE_STATUS.md`
+- Includes SBOM + provenance attestations
 
 ### ✅ Build/Release Pipeline (Complete)
 - Workflow: `Container Build & Push`
-- Run: https://github.com/web3devz/agentcred/actions/runs/23372859306
-- Result: successful image build + publish flow
+- Evidence snapshot: `docs/PROVENANCE_STATUS.md`
 
 ### ✅ Runtime Transport Security (Bridge Mode Complete)
 - E2E evidence: `docs/E2E_EVIDENCE.txt` (`E2E_VERIFY_OK`)
@@ -51,7 +47,23 @@
   - cert pin check
   - attestation token check
 
-> Note: native provider-level “verifiable TLS” support is platform-dependent. Current implementation gives strong practical guarantees now.
+### ✅ Bounty Track Implementation Evidence (Core)
+- **Protocol Labs (ERC-8004 Receipts)**
+  - Receipt payload contains `receipt.erc8004` + deterministic `receipt.hash`
+- **Filecoin (Pinata path)**
+  - Pinata client integrated (`apps/api/src/clients/pinata.js`)
+  - `artifactPayload -> ipfs://CID` path enabled when `PINATA_JWT` is set
+- **OpenServ**
+  - Real scoring integration path + health endpoint
+- **MetaMask Delegations**
+  - EIP-712 delegation envelope/verify endpoints + delegated release authorization
+- **Status Gasless**
+  - EIP-712 gasless envelope + signed release relay endpoint
+
+Evidence file:
+- `docs/API_INTEGRATION_EVIDENCE.md`
+
+> Note: for live-network sponsor proofs (OpenServ key, Pinata CID, Status relayer tx), env secrets must be configured in runtime.
 
 ---
 
@@ -108,4 +120,4 @@ Expected: `E2E_VERIFY_OK`
 
 ## 8) Commit Reference
 Latest submission commit (at time of bundle):
-- `ed82a2c`
+- `e86c578`

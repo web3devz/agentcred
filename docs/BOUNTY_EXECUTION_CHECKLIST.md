@@ -20,8 +20,8 @@
 - [ ] Tx hashes recorded in demo evidence
 
 ### OpenServ
-- [ ] OpenServ API key path wired and callable
-- [ ] At least one real orchestration action captured in logs
+- [x] OpenServ API key path wired and callable (`/integrations/openserv/health`, scoring hook)
+- [ ] At least one real orchestration action captured in logs with live key
 
 ### MetaMask Delegations
 - [x] Delegation verification endpoint implemented (`/delegations/verify`)
@@ -46,6 +46,6 @@
 ---
 
 ## Evidence artifacts required
-- [ ] `docs/FULL_E2E_RESULT.json` updated
-- [ ] `docs/SUBMISSION_READY.md` updated with new track evidence
-- [ ] Workflow links attached for latest commit
+- [x] `docs/FULL_E2E_RESULT.json` updated
+- [x] `docs/SUBMISSION_READY.md` updated with new track evidence
+- [ ] Workflow links attached for latest commit (after final push run)

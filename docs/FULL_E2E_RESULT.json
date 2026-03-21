@@ -8,9 +8,9 @@
     "ok": true,
     "service": "agentcred-api"
   },
-  "jobId": 2,
+  "jobId": 3,
   "receipt": {
-    "jobId": 2,
+    "jobId": 3,
     "milestoneId": 0,
     "receipt": {
       "artifactUrl": "https://example.com/artifact",
@@ -18,14 +18,14 @@
       "logs": [
         "ok"
       ],
-      "submittedAt": "2026-03-21T07:17:33.102Z",
-      "hash": "d1c77b65a048831e352b560aaa50d5938813ecc267e5a87965fe511d3d7262b9",
+      "submittedAt": "2026-03-21T07:24:52.363Z",
+      "hash": "949abd6c63b5be694c89c86b45f0972a7c8e5bcd075cd1b8dbd04f6a9eab9f3f",
       "erc8004": {
         "schema": "erc-8004",
         "version": "1.0.0",
-        "receiptId": "agentcred:2:0:d1c77b65a048",
+        "receiptId": "agentcred:3:0:949abd6c63b5",
         "work": {
-          "jobId": 2,
+          "jobId": 3,
           "milestoneId": 0,
           "title": "E2E Job",
           "agent": "agent1",
@@ -41,17 +41,17 @@
           "pinnedCid": null
         },
         "timestamps": {
-          "submittedAt": "2026-03-21T07:17:33.102Z"
+          "submittedAt": "2026-03-21T07:24:52.363Z"
         },
         "integrity": {
           "hashAlgo": "sha256",
-          "hash": "d1c77b65a048831e352b560aaa50d5938813ecc267e5a87965fe511d3d7262b9"
+          "hash": "949abd6c63b5be694c89c86b45f0972a7c8e5bcd075cd1b8dbd04f6a9eab9f3f"
         }
       }
     }
   },
   "score": {
-    "jobId": 2,
+    "jobId": 3,
     "milestoneId": 0,
     "verifier": {
       "verdict": "pass",
@@ -67,13 +67,13 @@
     "signalScore": 78
   },
   "release": {
-    "jobId": 2,
+    "jobId": 3,
     "milestoneId": 0,
     "payout": "released",
     "milestoneAmount": 5,
     "reputation": {
       "agent": "agent1",
-      "score": 14
+      "score": 21
     },
     "delegation": {
       "required": false,
@@ -94,7 +94,7 @@
   },
   "reputation": {
     "agent": "agent1",
-    "score": 14
+    "score": 21
   },
   "workerOnce": "ok"
 }
