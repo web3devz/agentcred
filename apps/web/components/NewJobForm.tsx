@@ -18,9 +18,9 @@ export default function NewJobForm({ onCreated }: { onCreated: () => void }) {
       })).filter(m => m.amount > 0);
 
       await apiPost('/jobs', {
-        title: fd.get('title'),
-        client: fd.get('client'),
-        agent: fd.get('agent'),
+        title: String(fd.get('title') || ''),
+        client: String(fd.get('client') || ''),
+        agent: String(fd.get('agent') || ''),
         amount: milestones.reduce((s, m) => s + m.amount, 0),
         milestones,
       });
@@ -34,25 +34,27 @@ export default function NewJobForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <form onSubmit={submit} style={{ display: 'grid', gap: 8, padding: 12, border: '1px solid #1f2a44', borderRadius: 10 }}>
-      <b>Create Job + Milestones</b>
-      <input name="title" placeholder="Task title" required />
-      <input name="client" placeholder="Client address" required />
-      <input name="agent" placeholder="Agent address" required />
+    <form onSubmit={submit} className="panel row">
+      <h3>Create Job + Milestones</h3>
+      <input className="input" name="title" placeholder="Task title" required />
+      <div className="row2">
+        <input className="input" name="client" placeholder="Client address" required />
+        <input className="input" name="agent" placeholder="Agent address" required />
+      </div>
 
-      <label>
-        Milestone count:
-        <input type="number" min={1} max={5} value={milestoneCount} onChange={(e) => setMilestoneCount(Number(e.target.value || 1))} style={{ marginLeft: 8, width: 72 }} />
+      <label className="small">
+        Milestone count
+        <input className="input" type="number" min={1} max={5} value={milestoneCount} onChange={(e) => setMilestoneCount(Number(e.target.value || 1))} />
       </label>
 
       {Array.from({ length: milestoneCount }).map((_, i) => (
-        <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: 6 }}>
-          <input name={`m_title_${i}`} placeholder={`Milestone ${i + 1} title`} defaultValue={`Milestone ${i + 1}`} required />
-          <input name={`m_amount_${i}`} placeholder="Amount" type="number" min="1" required />
+        <div key={i} className="row2">
+          <input className="input" name={`m_title_${i}`} placeholder={`Milestone ${i + 1} title`} defaultValue={`Milestone ${i + 1}`} required />
+          <input className="input" name={`m_amount_${i}`} placeholder="Amount" type="number" min="1" required />
         </div>
       ))}
 
-      <button disabled={loading} type="submit">{loading ? 'Creating...' : 'Create Job'}</button>
+      <button className="btn" disabled={loading} type="submit">{loading ? 'Creating...' : 'Create Job'}</button>
     </form>
   );
 }

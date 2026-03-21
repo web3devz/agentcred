@@ -18,8 +18,8 @@
       "logs": [
         "ok"
       ],
-      "submittedAt": "2026-03-21T06:01:32.283Z",
-      "hash": "87061a028c17b5f14b36789ff2d31a55c73b8758a73d29612366514ce324b4f8"
+      "submittedAt": "2026-03-21T06:24:49.761Z",
+      "hash": "971252bd735c012313ddb84cea120a57c5471cdc7dbc966467d4d5e5afff1d66"
     }
   },
   "score": {
@@ -29,7 +29,7 @@
       "verdict": "pass",
       "score": 78,
       "signedBy": "tee-placeholder",
-      "receiptHash": "87061a028c17b5f14b36789ff2d31a55c73b8758a73d29612366514ce324b4f8"
+      "receiptHash": "971252bd735c012313ddb84cea120a57c5471cdc7dbc966467d4d5e5afff1d66"
     }
   },
   "release": {

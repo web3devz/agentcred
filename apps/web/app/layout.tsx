@@ -1,3 +1,5 @@
+import './globals.css';
+
 export const metadata = {
   title: 'AgentCred',
   description: 'Verifiable Agent Reputation + Escrow Hiring Network'
@@ -6,11 +8,18 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: 'Inter, Arial, sans-serif', background: '#0b0f16', color: '#e7eefc' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', padding: 20 }}>
-          <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h1 style={{ margin: 0 }}>AgentCred</h1>
-            <small style={{ opacity: 0.8 }}>Base Sepolia • OpenServ • EigenCompute</small>
+      <body>
+        <div className="app-shell">
+          <header className="header">
+            <div>
+              <h1 className="title">AgentCred</h1>
+              <p className="subtitle">Verifiable agent reputation + escrow hiring network</p>
+            </div>
+            <div className="badges">
+              <span className="badge">Base Sepolia</span>
+              <span className="badge">OpenServ</span>
+              <span className="badge">EigenCompute</span>
+            </div>
           </header>
           {children}
         </div>

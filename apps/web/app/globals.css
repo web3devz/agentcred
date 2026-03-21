@@ -1,0 +1,59 @@
+:root {
+  --bg: #0a0f1a;
+  --panel: #101a2b;
+  --panel-2: #0f1726;
+  --text: #e8eefc;
+  --muted: #9eb0d1;
+  --line: #243454;
+  --accent: #67b3ff;
+  --ok: #49d18a;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: radial-gradient(1200px 500px at 20% -10%, #152543 0%, var(--bg) 60%);
+  color: var(--text);
+}
+
+.app-shell { max-width: 1080px; margin: 0 auto; padding: 24px; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; gap: 12px; }
+.title { margin: 0; font-size: 30px; }
+.subtitle { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { border: 1px solid var(--line); background: #0d1627; color: #b9caf0; font-size: 12px; padding: 4px 8px; border-radius: 999px; }
+
+.grid { display: grid; gap: 14px; }
+.panel { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.panel h3 { margin: 0 0 10px; }
+
+.row { display: grid; gap: 8px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.input, .textarea, .select, .btn {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #2a3a5d;
+  background: #0b1322;
+  color: var(--text);
+  padding: 10px 12px;
+}
+.textarea { min-height: 72px; resize: vertical; }
+.btn { cursor: pointer; background: #173057; border-color: #2a4f8d; font-weight: 600; }
+.btn:hover { background: #1b3a69; }
+.btn:disabled { opacity: .7; cursor: not-allowed; }
+
+.jobs { display: grid; gap: 10px; }
+.job { border: 1px solid #2a3c61; border-radius: 10px; padding: 12px; background: #0a1220; }
+.job-top { display: flex; justify-content: space-between; gap: 8px; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.milestone { margin-top: 10px; border: 1px solid #26365a; border-radius: 10px; padding: 10px; background: #0a1324; }
+.milestone-title { font-weight: 600; }
+.actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.small { font-size: 12px; color: var(--muted); }
+.ok { color: var(--ok); font-weight: 600; }
+
+@media (max-width: 760px) {
+  .row2 { grid-template-columns: 1fr; }
+  .header { flex-direction: column; }
+}

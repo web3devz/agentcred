@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import NewJobForm from '../components/NewJobForm';
 import JobActions from '../components/JobActions';
 import { apiGet } from '../lib/api';
@@ -14,8 +14,6 @@ type Job = {
   agent: string;
   amount: number;
   status: string;
-  score: number | null;
-  verdict: string | null;
   milestones: Milestone[];
 };
 
@@ -35,19 +33,39 @@ export default function HomePage() {
 
   useEffect(() => { load(); }, []);
 
+  const stats = useMemo(() => {
+    const total = jobs.reduce((s, j) => s + j.amount, 0);
+    const released = jobs.filter((j) => j.status === 'RELEASED').length;
+    return { totalJobs: jobs.length, totalAmount: total, released };
+  }, [jobs]);
+
   return (
-    <main style={{ display: 'grid', gap: 14 }}>
+    <main className="grid">
+      <section className="panel">
+        <h3>Network Snapshot</h3>
+        <div className="row2">
+          <div className="small">Jobs: <b>{stats.totalJobs}</b></div>
+          <div className="small">Released: <b>{stats.released}</b></div>
+          <div className="small">Escrow Volume: <b>{stats.totalAmount}</b></div>
+          <div className="small">Mode: <b>Live API (no mocks)</b></div>
+        </div>
+      </section>
+
       <NewJobForm onCreated={load} />
-      <section style={{ border: '1px solid #1f2a44', borderRadius: 10, padding: 12 }}>
-        <h3 style={{ marginTop: 0 }}>Jobs</h3>
-        {loading ? <p>Loading...</p> : jobs.length === 0 ? <p>No jobs yet.</p> : (
-          <div style={{ display: 'grid', gap: 10 }}>
+
+      <section className="panel">
+        <h3>Jobs</h3>
+        {loading ? <p className="small">Loading...</p> : jobs.length === 0 ? <p className="small">No jobs yet.</p> : (
+          <div className="jobs">
             {jobs.map((j) => (
-              <div key={j.id} style={{ border: '1px solid #223056', borderRadius: 8, padding: 10 }}>
-                <div><b>#{j.id}</b> {j.title}</div>
-                <div>Status: {j.status} | Total: {j.amount}</div>
-                <div>Client: {j.client}</div>
-                <div>Agent: {j.agent}</div>
+              <div key={j.id} className="job">
+                <div className="job-top">
+                  <div><b>#{j.id}</b> {j.title}</div>
+                  <div className="small">{j.status}</div>
+                </div>
+                <div className="meta">Total: {j.amount}</div>
+                <div className="meta">Client: {j.client}</div>
+                <div className="meta">Agent: {j.agent}</div>
                 <JobActions id={j.id} milestones={j.milestones || []} onDone={load} />
               </div>
             ))}
