@@ -209,10 +209,15 @@ const server = http.createServer(async (req, res) => {
 
       let onchainRelease = null;
       let onchainReputation = null;
+      const onchainJobId = job?.onchain?.onchainJobId ?? jobId;
       try {
-        onchainRelease = await releaseMilestoneOnchain({ jobId, milestoneId });
+        onchainRelease = await releaseMilestoneOnchain({
+          jobId: onchainJobId,
+          milestoneId,
+          receiptHash: m.receipt?.hash,
+        });
       } catch (e) {
-        onchainRelease = { skipped: false, error: String(e.message || e) };
+        onchainRelease = { skipped: false, error: String(e.message || e), onchainJobId };
       }
 
       try {
