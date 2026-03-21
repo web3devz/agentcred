@@ -60,10 +60,12 @@
 - **Status Gasless**
   - EIP-712 gasless envelope + signed release relay endpoint
 
-Evidence file:
+Evidence files:
 - `docs/API_INTEGRATION_EVIDENCE.md`
+- `docs/LIVE_PROOF_EVIDENCE.md`
+- `docs/LIVE_PROOF_EVIDENCE.json`
 
-> Note: for live-network sponsor proofs (OpenServ key, Pinata CID, Status relayer tx), env secrets must be configured in runtime.
+> Note: live OpenServ + Pinata proof completed and captured. Status relayer tx hash requires configured Status relayer credentials/network.
 
 ---
 

@@ -1,0 +1,16 @@
+{
+  "openservHealth": {
+    "ok": true,
+    "integration": "openserv",
+    "configured": true
+  },
+  "statusHealth": {
+    "ok": true,
+    "integration": "status-gasless",
+    "configured": false
+  },
+  "receiptSummary": {},
+  "scoreSummary": {
+    "openservError": null
+  }
+}

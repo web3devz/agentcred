@@ -21,7 +21,7 @@
 
 ### OpenServ
 - [x] OpenServ API key path wired and callable (`/integrations/openserv/health`, scoring hook)
-- [ ] At least one real orchestration action captured in logs with live key
+- [x] Live key execution evidence captured (`docs/LIVE_PROOF_EVIDENCE.md`)
 
 ### MetaMask Delegations
 - [x] Delegation verification endpoint implemented (`/delegations/verify`)
@@ -31,11 +31,11 @@
 
 ### Protocol Labs (ERC-8004)
 - [x] Receipt payload emitted in ERC-8004 structure
-- [ ] Evidence file with sample signed/hashed receipt and validation
+- [x] Evidence file with hashed receipt + ERC-8004 payload (`docs/LIVE_PROOF_EVIDENCE.json`)
 
 ### Filecoin / Pinata
 - [x] Pinata JSON pinning client implemented
-- [ ] End-to-end run with real PINATA_JWT producing ipfs:// CID
+- [x] End-to-end run with real PINATA_JWT producing ipfs:// CID (`docs/LIVE_PROOF_EVIDENCE.*`)
 
 ### Status Gasless
 - [x] Status gasless intent envelope endpoint (`/status/gasless/envelope`)
