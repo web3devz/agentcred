@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  agentcred:
+    build: .
+    container_name: agentcred-secure
+    ports:
+      - "8443:8443"
+    environment:
+      PORT: 8443
+      HOST: 0.0.0.0
+      TLS_KEY_PATH: /app/tls/certs/server.key
+      TLS_CERT_PATH: /app/tls/certs/server.crt
+      TLS_CA_PATH: /app/tls/certs/ca.crt
+      ALLOWED_CLIENT_CERT_SHA256: ${ALLOWED_CLIENT_CERT_SHA256:-}
+      REQUIRED_ATTESTATION: ${REQUIRED_ATTESTATION:-}

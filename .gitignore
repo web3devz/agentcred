@@ -1,18 +1,36 @@
+# Dependencies
 node_modules/
+
+# Env
 .env
 .env.*
 !.env.example
+
+# Build outputs
 dist/
 build/
 .next/
 out/
 coverage/
 .cache/
-*.log
-.DS_Store
-pnpm-lock.yaml
-yarn.lock
-package-lock.json
 artifacts/
 cache/
 typechain-types/
+
+# Generated TLS material
+tls/certs/
+
+# Logs
+*.log
+seedstr_autoworker_cron.log
+
+# Local nested repos/submodules unless explicitly needed
+openserv-skills/
+
+# OS/editor
+.DS_Store
+.vscode/
+
+# Optional lockfiles (uncomment if not used)
+# pnpm-lock.yaml
+# yarn.lock

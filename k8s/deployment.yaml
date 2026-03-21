@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentcred
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agentcred
+  template:
+    metadata:
+      labels:
+        app: agentcred
+    spec:
+      containers:
+        - name: agentcred
+          image: ghcr.io/REPLACE_ORG/agentcred:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8443
+          env:
+            - name: PORT
+              value: "8443"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: TLS_KEY_PATH
+              value: "/certs/server.key"
+            - name: TLS_CERT_PATH
+              value: "/certs/server.crt"
+            - name: TLS_CA_PATH
+              value: "/certs/ca.crt"
+            - name: ALLOWED_CLIENT_CERT_SHA256
+              valueFrom:
+                secretKeyRef:
+                  name: agentcred-secrets
+                  key: ALLOWED_CLIENT_CERT_SHA256
+            - name: REQUIRED_ATTESTATION
+              valueFrom:
+                secretKeyRef:
+                  name: agentcred-secrets
+                  key: REQUIRED_ATTESTATION
+          volumeMounts:
+            - mountPath: /certs
+              name: tls-certs
+              readOnly: true
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: agentcred-tls
