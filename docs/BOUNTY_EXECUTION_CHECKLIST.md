@@ -38,8 +38,10 @@
 - [ ] End-to-end run with real PINATA_JWT producing ipfs:// CID
 
 ### Status Gasless
-- [ ] Status gasless transaction path integrated
-- [ ] One successful gasless operation captured in evidence
+- [x] Status gasless intent envelope endpoint (`/status/gasless/envelope`)
+- [x] Status gasless signed execution endpoint (`/status/gasless/release`)
+- [x] Status integration health endpoint (`/integrations/status/health`)
+- [ ] One successful on-network gasless operation captured in evidence
 
 ---
 

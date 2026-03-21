@@ -5,6 +5,7 @@ import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchai
 import { pinJsonToIpfs } from './clients/pinata.js';
 import { isOpenServConfigured, scoreReceiptWithOpenServ } from './clients/openserv.js';
 import { verifyDelegation, delegationEnvelope } from './clients/metamask-delegation.js';
+import { statusGaslessConfigured, statusGaslessEnvelope, verifyGaslessRelease, relayGaslessRelease } from './clients/status-gasless.js';
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -12,6 +13,7 @@ const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
 const db = {
   jobs: new Map(),
   reputation: new Map(),
+  usedGaslessNonces: new Set(),
   nextJobId: 1,
 };
 
@@ -113,6 +115,52 @@ const server = http.createServer(async (req, res) => {
         expectedResource: body.expectedResource,
       });
       return json(res, result.ok ? 200 : 400, result);
+    }
+
+    if (req.method === 'GET' && pathname === '/integrations/status/health') {
+      return json(res, 200, {
+        ok: true,
+        integration: 'status-gasless',
+        configured: statusGaslessConfigured(),
+      });
+    }
+
+    if (req.method === 'POST' && pathname === '/status/gasless/envelope') {
+      const body = await readBody(req);
+      const envelope = statusGaslessEnvelope({
+        user: body.user,
+        jobId: body.jobId,
+        milestoneId: body.milestoneId,
+        nonce: Number(body.nonce || 0),
+        ttlSec: Number(body.ttlSec || 900),
+      });
+      return json(res, 200, envelope);
+    }
+
+    if (req.method === 'POST' && pathname === '/status/gasless/release') {
+      const body = await readBody(req);
+      const envelope = body.envelope;
+      const signature = body.signature;
+
+      const check = verifyGaslessRelease({ envelope, signature });
+      if (!check.ok) return json(res, 400, { error: 'invalid_gasless_intent', details: check });
+
+      const nonceKey = `${String(envelope.message.user).toLowerCase()}:${envelope.message.nonce}`;
+      if (db.usedGaslessNonces.has(nonceKey)) return json(res, 400, { error: 'nonce_already_used' });
+      db.usedGaslessNonces.add(nonceKey);
+
+      const relay = await relayGaslessRelease({
+        jobId: envelope.message.jobId,
+        milestoneId: envelope.message.milestoneId,
+      });
+
+      return json(res, 200, {
+        ok: true,
+        gasless: true,
+        user: envelope.message.user,
+        nonce: envelope.message.nonce,
+        relay,
+      });
     }
 
     if (req.method === 'GET' && pathname === '/integrations/openserv/health') {
