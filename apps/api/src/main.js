@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
 import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
 import { pinJsonToIpfs } from './clients/pinata.js';
-import { isOpenServConfigured, scoreReceiptWithOpenServ } from './clients/openserv.js';
+import { isOpenServConfigured } from './clients/openserv.js';
 import { ensureOpenServWorkflow, runOpenServWorkflow, getOpenServState } from './clients/openserv-platform.js';
 import { verifyDelegation, delegationEnvelope } from './clients/metamask-delegation.js';
 import { statusGaslessConfigured, statusGaslessEnvelope, verifyGaslessRelease, relayGaslessRelease } from './clients/status-gasless.js';
@@ -326,24 +326,8 @@ const server = http.createServer(async (req, res) => {
       if (!m) return json(res, 404, { error: 'milestone_not_found' });
       if (!m.receipt) return json(res, 400, { error: 'receipt_required' });
 
-      let openserv = { used: false, configured: isOpenServConfigured(), score: null, error: null };
+      let openserv = { used: false, configured: isOpenServConfigured(), error: null };
       let signalScore = 78;
-
-      if (openserv.configured) {
-        try {
-          const result = await scoreReceiptWithOpenServ({
-            title: job.title,
-            summary: m.receipt?.summary || '',
-            logs: m.receipt?.logs || [],
-          });
-          if (typeof result.score === 'number') {
-            signalScore = result.score;
-          }
-          openserv = { ...openserv, used: true, score: result.score, raw: result.raw };
-        } catch (e) {
-          openserv = { ...openserv, used: true, error: String(e.message || e) };
-        }
-      }
 
       const payload = { jobId, milestoneId, receiptHash: m.receipt.hash, signalScore };
       const payloadCheck = requireFields(VerifierRequestSchema, payload);
@@ -376,8 +360,10 @@ const server = http.createServer(async (req, res) => {
             milestoneId,
             jobId,
           });
+          openserv.used = true;
           openserv.workflowRun = run;
         } catch (e) {
+          openserv.used = true;
           openserv.workflowError = String(e.message || e);
         }
       }

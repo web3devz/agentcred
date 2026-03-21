@@ -8,9 +8,9 @@
     "ok": true,
     "service": "agentcred-api"
   },
-  "jobId": 3,
+  "jobId": 1,
   "receipt": {
-    "jobId": 3,
+    "jobId": 1,
     "milestoneId": 0,
     "receipt": {
       "artifactUrl": "https://example.com/artifact",
@@ -18,14 +18,14 @@
       "logs": [
         "ok"
       ],
-      "submittedAt": "2026-03-21T07:24:52.363Z",
-      "hash": "949abd6c63b5be694c89c86b45f0972a7c8e5bcd075cd1b8dbd04f6a9eab9f3f",
+      "submittedAt": "2026-03-21T10:27:01.113Z",
+      "hash": "e19155feed2c28c342cfa47e72b2b2a4468310c67cc1e9c5b98d12fd8c23a7b3",
       "erc8004": {
         "schema": "erc-8004",
         "version": "1.0.0",
-        "receiptId": "agentcred:3:0:949abd6c63b5",
+        "receiptId": "agentcred:1:0:e19155feed2c",
         "work": {
-          "jobId": 3,
+          "jobId": 1,
           "milestoneId": 0,
           "title": "E2E Job",
           "agent": "agent1",
@@ -41,39 +41,40 @@
           "pinnedCid": null
         },
         "timestamps": {
-          "submittedAt": "2026-03-21T07:24:52.363Z"
+          "submittedAt": "2026-03-21T10:27:01.113Z"
         },
         "integrity": {
           "hashAlgo": "sha256",
-          "hash": "949abd6c63b5be694c89c86b45f0972a7c8e5bcd075cd1b8dbd04f6a9eab9f3f"
+          "hash": "e19155feed2c28c342cfa47e72b2b2a4468310c67cc1e9c5b98d12fd8c23a7b3"
         }
       }
     }
   },
   "score": {
-    "jobId": 3,
+    "jobId": 1,
     "milestoneId": 0,
     "verifier": {
       "verdict": "pass",
       "score": 78,
-      "signedBy": "tee-placeholder"
+      "signedBy": "tee-placeholder",
+      "receiptHash": "e19155feed2c28c342cfa47e72b2b2a4468310c67cc1e9c5b98d12fd8c23a7b3"
     },
     "openserv": {
-      "used": false,
-      "configured": false,
-      "score": null,
-      "error": null
+      "used": true,
+      "configured": true,
+      "error": null,
+      "workflowError": "openserv_platform_not_configured"
     },
     "signalScore": 78
   },
   "release": {
-    "jobId": 3,
+    "jobId": 1,
     "milestoneId": 0,
     "payout": "released",
     "milestoneAmount": 5,
     "reputation": {
       "agent": "agent1",
-      "score": 21
+      "score": 7
     },
     "delegation": {
       "required": false,
@@ -94,7 +95,7 @@
   },
   "reputation": {
     "agent": "agent1",
-    "score": 21
+    "score": 7
   },
   "workerOnce": "ok"
 }

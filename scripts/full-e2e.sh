@@ -3,26 +3,31 @@ set -euo pipefail
 
 # Full-stack E2E: web build + verifier + api milestone flow + worker once
 
-npm --workspace @agentcred/web run build >/tmp/web-build.log 2>&1
+VERIFIER_PORT="${VERIFIER_PORT:-3100}"
+API_PORT="${API_PORT:-3101}"
 
-node apps/verifier-tee/src/server.js >/tmp/verifier.log 2>&1 &
+# avoid inherited non-standard NODE_ENV values from local .env
+NODE_ENV=production npm --workspace @agentcred/web run build >/tmp/web-build.log 2>&1
+
+PORT="$VERIFIER_PORT" node apps/verifier-tee/src/server.js >/tmp/verifier.log 2>&1 &
 VPID=$!
-PORT=3001 VERIFIER_URL=http://localhost:3000/verify node apps/api/src/main.js >/tmp/api.log 2>&1 &
+PORT="$API_PORT" VERIFIER_URL="http://localhost:${VERIFIER_PORT}/verify" node apps/api/src/main.js >/tmp/api.log 2>&1 &
 APID=$!
+
 cleanup(){ kill $VPID $APID >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 sleep 2
 
-curl -s http://localhost:3000/health > /tmp/verifier_health.json
-curl -s http://localhost:3001/health > /tmp/api_health.json
+curl -s "http://localhost:${VERIFIER_PORT}/health" > /tmp/verifier_health.json
+curl -s "http://localhost:${API_PORT}/health" > /tmp/api_health.json
 
-JOB=$(curl -s -X POST http://localhost:3001/jobs -H 'content-type: application/json' -d '{"title":"E2E Job","client":"client1","agent":"agent1","amount":5,"milestones":[{"title":"M1","amount":5}]}')
+JOB=$(curl -s -X POST "http://localhost:${API_PORT}/jobs" -H 'content-type: application/json' -d '{"title":"E2E Job","client":"client1","agent":"agent1","amount":5,"milestones":[{"title":"M1","amount":5}]}')
 JOB_ID=$(node -e "const j=JSON.parse(process.argv[1]); if(!j.id) process.exit(1); console.log(j.id)" "$JOB")
 
-curl -s -X POST http://localhost:3001/jobs/$JOB_ID/milestones/0/receipt -H 'content-type: application/json' -d '{"artifactUrl":"https://example.com/artifact","summary":"done","logs":["ok"]}' > /tmp/receipt.json
-curl -s -X POST http://localhost:3001/jobs/$JOB_ID/milestones/0/score -H 'content-type: application/json' -d '{}' > /tmp/score.json
-curl -s -X POST http://localhost:3001/jobs/$JOB_ID/milestones/0/release -H 'content-type: application/json' -d '{}' > /tmp/release.json
-curl -s http://localhost:3001/reputation/agent1 > /tmp/reputation.json
+curl -s -X POST "http://localhost:${API_PORT}/jobs/$JOB_ID/milestones/0/receipt" -H 'content-type: application/json' -d '{"artifactUrl":"https://example.com/artifact","summary":"done","logs":["ok"]}' > /tmp/receipt.json
+curl -s -X POST "http://localhost:${API_PORT}/jobs/$JOB_ID/milestones/0/score" -H 'content-type: application/json' -d '{}' > /tmp/score.json
+curl -s -X POST "http://localhost:${API_PORT}/jobs/$JOB_ID/milestones/0/release" -H 'content-type: application/json' -d '{}' > /tmp/release.json
+curl -s "http://localhost:${API_PORT}/reputation/agent1" > /tmp/reputation.json
 
 npm --workspace @agentcred/worker run once >/tmp/worker-once.log 2>&1
 
