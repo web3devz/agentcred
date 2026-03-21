@@ -13,13 +13,21 @@
     "start": "node src/server.js",
     "sbom": "cyclonedx-npm --output-file sbom.cdx.json",
     "verify:provenance": "bash scripts/verify-provenance.sh",
-    "verify:e2e": "bash scripts/e2e-verify.sh"
+    "verify:e2e": "bash scripts/e2e-verify.sh",
+    "dev:api": "bash -lc 'set -a; [ -f .env ] && source .env; set +a; npm --workspace @agentcred/api run dev'",
+    "dev:worker": "npm --workspace @agentcred/worker run dev",
+    "dev:web:build": "NODE_ENV=production npm --workspace @agentcred/web run build",
+    "dev:web:start": "cd apps/web && npx next start -p 3002",
+    "dev:stack": "concurrently -n api,web,worker -c green,blue,magenta \"npm run dev:api\" \"npm run dev:web:start\" \"npm run dev:worker\"",
+    "dev:stack:build": "npm run dev:web:build && npm run dev:stack",
+    "dev:down": "pkill -f 'next start -p 3002' >/dev/null 2>&1 || true; pkill -f '@agentcred/api' >/dev/null 2>&1 || true; pkill -f '@agentcred/worker' >/dev/null 2>&1 || true"
   },
   "dependencies": {
     "@openserv-labs/client": "^2.5.3",
     "ethers": "^6.16.0"
   },
   "devDependencies": {
-    "@cyclonedx/cyclonedx-npm": "^3.0.0"
+    "@cyclonedx/cyclonedx-npm": "^3.0.0",
+    "concurrently": "^9.0.1"
   }
 }

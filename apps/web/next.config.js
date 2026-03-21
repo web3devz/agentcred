@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typedRoutes: false,
+  // Keep config minimal; no unsupported keys
 };
 
 module.exports = nextConfig;
