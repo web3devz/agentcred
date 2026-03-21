@@ -56,4 +56,14 @@
       }
     }
   }
+  ,
+  "latestOnchainE2E": {
+    "jobId": 4,
+    "onchainJobId": 10,
+    "createTxHash": "0x44e5c411ccfdb3e485010b2d4ec37c68b40b31a063e7382b0d358e7ecfe1dd0b",
+    "receiptHash": "a6eddf160d10a79cbec9e8e4217ecd9959ab447ca430551681656655afaca250",
+    "submitTxHash": "0xd6565919ce64e533065062c1ce4431eb47a9c3bdfcec69a4c367b23cc44f1a35",
+    "approveTxHash": "0x97ee8328c33beece0628c55d58ba60afd5eec4ef88e87849ee2077c71df4b01e",
+    "releaseTxHash": "0x37187462c2d448afa0de1a15663f634c6434b43087648f3650b1e40c00f83427"
+  }
 }

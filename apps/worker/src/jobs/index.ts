@@ -1,1 +1,1 @@
-// queue jobs
+export { makeDemoJob } from './demoJob.js';

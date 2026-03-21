@@ -1,8 +1,19 @@
 name: ci
 on: [push, pull_request]
 jobs:
-  lint:
+  build-and-e2e:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "CI placeholder"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Web build
+        run: NODE_ENV=production npm --workspace @agentcred/web run build
+      - name: Full lifecycle E2E
+        run: bash scripts/full-e2e.sh
+      - name: TLS/mTLS E2E verify
+        run: npm run verify:e2e

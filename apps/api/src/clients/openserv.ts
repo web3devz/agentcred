@@ -1,1 +1,1 @@
-// openserv client
+export * from './openserv.js';

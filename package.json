@@ -20,6 +20,7 @@
     "dev:web:start": "cd apps/web && npx next start -p 3002",
     "dev:stack": "concurrently -n api,web,worker -c green,blue,magenta \"npm run dev:api\" \"npm run dev:web:start\" \"npm run dev:worker\"",
     "dev:stack:build": "npm run dev:web:build && npm run dev:stack",
+    "onchain:e2e": "node scripts/onchain-e2e.js",
     "dev:down": "pkill -f 'next start -p 3002' >/dev/null 2>&1 || true; pkill -f '@agentcred/api' >/dev/null 2>&1 || true; pkill -f '@agentcred/worker' >/dev/null 2>&1 || true"
   },
   "dependencies": {

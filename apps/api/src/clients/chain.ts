@@ -1,1 +1,1 @@
-// chain client
+export * from './chain.js';

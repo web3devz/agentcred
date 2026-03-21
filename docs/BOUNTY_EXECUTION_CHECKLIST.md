@@ -18,7 +18,7 @@
 ### Base
 - [x] Onchain create flow executed on Base Sepolia
 - [x] Tx hashes recorded in demo evidence (`docs/BASE_STATUS_PROOF.json`)
-- [ ] End-to-end onchain submit+approve+release path needs contract role alignment (current proof includes create + reputation tx)
+- [ ] End-to-end onchain submit+approve+release path needs contract role alignment (current proof includes create + reputation tx) — Pending: deployed Escrow roles must permit agent submit + client approve + release. Code path implemented in API (`clients/chain.js`) and exercised locally (skips if not configured).
 
 ### OpenServ
 - [x] OpenServ API key path wired and callable (`/integrations/openserv/health`, scoring hook)
@@ -49,4 +49,7 @@
 ## Evidence artifacts required
 - [x] `docs/FULL_E2E_RESULT.json` updated
 - [x] `docs/SUBMISSION_READY.md` updated with new track evidence
-- [ ] Workflow links attached for latest commit (after final push run)
+- [x] Workflow links attached for latest commit (after final push run)
+	- Supply Chain Verification: https://github.com/web3devz/agentcred/actions/runs/23372859298
+	- Container Build & Push: https://github.com/web3devz/agentcred/actions/runs/23372859306
+	- CI: https://github.com/web3devz/agentcred/actions/runs/23372859305
