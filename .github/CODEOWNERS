@@ -1,0 +1,9 @@
+# Default owners
+* @web3devz
+
+# Security-critical paths
+.github/workflows/* @web3devz
+scripts/* @web3devz
+tls/* @web3devz
+src/server.js @web3devz
+k8s/* @web3devz
