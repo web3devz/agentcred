@@ -3,7 +3,7 @@ export const JobCreateSchema = {
 };
 
 export const ReceiptSchema = {
-  required: ['artifactUrl', 'summary'],
+  required: ['summary'],
 };
 
 export const VerifierRequestSchema = {

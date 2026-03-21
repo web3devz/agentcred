@@ -2,6 +2,7 @@ import http from 'node:http';
 import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
 import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
+import { pinJsonToIpfs } from './clients/pinata.js';
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -39,6 +40,30 @@ async function readBody(req) {
 
 function receiptHash(obj) {
   return createHash('sha256').update(JSON.stringify(obj)).digest('hex');
+}
+
+function buildErc8004Receipt({ jobId, milestoneId, job, artifactUrl, summary, logs, submittedAt, hash, proofCid = null }) {
+  return {
+    schema: 'erc-8004',
+    version: '1.0.0',
+    receiptId: `agentcred:${jobId}:${milestoneId}:${hash.slice(0, 12)}`,
+    work: {
+      jobId,
+      milestoneId,
+      title: job.title,
+      agent: job.agent,
+      client: job.client,
+      amount: job.milestones[milestoneId]?.amount ?? null,
+    },
+    artifact: {
+      uri: artifactUrl,
+      summary,
+      logs,
+      pinnedCid: proofCid,
+    },
+    timestamps: { submittedAt },
+    integrity: { hashAlgo: 'sha256', hash },
+  };
 }
 
 function parseId(pathname) {
@@ -144,13 +169,53 @@ const server = http.createServer(async (req, res) => {
         return json(res, 400, { error: 'missing_fields', required: ReceiptSchema.required, missing: receiptCheck.missing });
       }
 
-      const receipt = {
-        artifactUrl: body.artifactUrl,
+      const submittedAt = new Date().toISOString();
+      let artifactUrl = body.artifactUrl;
+      let proofCid = null;
+
+      if (!artifactUrl && body.artifactPayload) {
+        const pinRes = await pinJsonToIpfs({
+          pinataContent: {
+            jobId,
+            milestoneId,
+            title: job.title,
+            artifactPayload: body.artifactPayload,
+            submittedAt,
+          },
+          pinataMetadata: {
+            name: `agentcred-receipt-${jobId}-${milestoneId}`,
+          },
+        });
+        artifactUrl = pinRes.uri;
+        proofCid = pinRes.cid;
+      }
+
+      if (!artifactUrl) {
+        return json(res, 400, { error: 'artifact_required', message: 'Provide artifactUrl or artifactPayload with PINATA_JWT configured' });
+      }
+
+      const logs = Array.isArray(body.logs) ? body.logs : [];
+      const hash = receiptHash({ jobId, milestoneId, artifactUrl, summary: body.summary, logs, submittedAt });
+      const erc8004 = buildErc8004Receipt({
+        jobId,
+        milestoneId,
+        job,
+        artifactUrl,
         summary: body.summary,
-        logs: body.logs || [],
-        submittedAt: new Date().toISOString(),
+        logs,
+        submittedAt,
+        hash,
+        proofCid,
+      });
+
+      const receipt = {
+        artifactUrl,
+        summary: body.summary,
+        logs,
+        submittedAt,
+        hash,
+        erc8004,
       };
-      receipt.hash = receiptHash({ jobId, milestoneId, ...receipt });
 
       m.receipt = receipt;
       m.status = 'SUBMITTED';
