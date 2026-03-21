@@ -7,10 +7,9 @@ LABEL org.opencontainers.image.title="AgentCred" \
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
-
+# Copy full repo first so npm workspaces dependencies (e.g. apps/api) are available during install
 COPY . .
+RUN npm ci
 
 EXPOSE 8443
 ENV NODE_ENV=production
