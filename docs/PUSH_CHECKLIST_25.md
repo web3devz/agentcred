@@ -12,7 +12,7 @@ Goal: ship a demo-ready, judge-friendly product that maps clearly to target boun
 ## Phase B — Core Product Loop (Pushes 6-12)
 6. Create job + milestone flow in UI ✅
 7. Escrow interaction wiring (fund/create/release) ✅
-8. Worker queue skeleton with orchestration states
+8. Worker queue skeleton with orchestration states ✅
 9. OpenServ adapter (task request + status polling interface)
 10. Receipt ingest + hash pipeline
 11. Verifier-TEE request/response signing format
