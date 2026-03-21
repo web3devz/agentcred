@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
 import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
 import { pinJsonToIpfs } from './clients/pinata.js';
+import { isOpenServConfigured, scoreReceiptWithOpenServ } from './clients/openserv.js';
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -87,6 +88,14 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.method === 'GET' && pathname === '/health') {
       return json(res, 200, { ok: true, service: 'agentcred-api' });
+    }
+
+    if (req.method === 'GET' && pathname === '/integrations/openserv/health') {
+      return json(res, 200, {
+        ok: true,
+        integration: 'openserv',
+        configured: isOpenServConfigured(),
+      });
     }
 
     if (req.method === 'POST' && pathname === '/jobs') {
@@ -233,7 +242,26 @@ const server = http.createServer(async (req, res) => {
       if (!m) return json(res, 404, { error: 'milestone_not_found' });
       if (!m.receipt) return json(res, 400, { error: 'receipt_required' });
 
-      const payload = { jobId, milestoneId, receiptHash: m.receipt.hash, signalScore: 78 };
+      let openserv = { used: false, configured: isOpenServConfigured(), score: null, error: null };
+      let signalScore = 78;
+
+      if (openserv.configured) {
+        try {
+          const result = await scoreReceiptWithOpenServ({
+            title: job.title,
+            summary: m.receipt?.summary || '',
+            logs: m.receipt?.logs || [],
+          });
+          if (typeof result.score === 'number') {
+            signalScore = result.score;
+          }
+          openserv = { ...openserv, used: true, score: result.score, raw: result.raw };
+        } catch (e) {
+          openserv = { ...openserv, used: true, error: String(e.message || e) };
+        }
+      }
+
+      const payload = { jobId, milestoneId, receiptHash: m.receipt.hash, signalScore };
       const payloadCheck = requireFields(VerifierRequestSchema, payload);
       if (!payloadCheck.ok) {
         return json(res, 500, { error: 'invalid_verifier_payload', missing: payloadCheck.missing });
@@ -254,7 +282,7 @@ const server = http.createServer(async (req, res) => {
       m.verdict = verdict.verdict;
       m.status = verdict.verdict === 'pass' ? 'APPROVED' : 'SUBMITTED';
 
-      return json(res, 200, { jobId, milestoneId, verifier: verdict });
+      return json(res, 200, { jobId, milestoneId, verifier: verdict, openserv, signalScore });
     }
 
     if (req.method === 'POST' && /^\/jobs\/\d+\/milestones\/\d+\/release$/.test(pathname)) {
