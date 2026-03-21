@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node src/main.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.2"
   }
 }

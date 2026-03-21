@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
+import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -101,7 +102,19 @@ const server = http.createServer(async (req, res) => {
         verdict: null,
         releasedAt: null,
         createdAt: new Date().toISOString(),
+        onchain: null,
       };
+
+      try {
+        const onchain = await createEscrowJobOnchain({
+          agent: body.agent,
+          milestoneAmounts: milestones.map((m) => m.amount),
+        });
+        job.onchain = onchain;
+      } catch (e) {
+        job.onchain = { skipped: false, error: String(e.message || e) };
+      }
+
       db.jobs.set(id, job);
       return json(res, 201, job);
     }
@@ -194,6 +207,24 @@ const server = http.createServer(async (req, res) => {
       const next = Math.min(1000, prev + Math.max(1, Math.floor((m.score || 70) / 10)));
       db.reputation.set(job.agent, next);
 
+      let onchainRelease = null;
+      let onchainReputation = null;
+      try {
+        onchainRelease = await releaseMilestoneOnchain({ jobId, milestoneId });
+      } catch (e) {
+        onchainRelease = { skipped: false, error: String(e.message || e) };
+      }
+
+      try {
+        onchainReputation = await updateReputationOnchain({
+          agent: job.agent,
+          score: next,
+          receiptHash: m.receipt?.hash || '0x0',
+        });
+      } catch (e) {
+        onchainReputation = { skipped: false, error: String(e.message || e) };
+      }
+
       if (allMilestonesReleased(job)) {
         job.status = 'RELEASED';
         job.releasedAt = new Date().toISOString();
@@ -207,6 +238,10 @@ const server = http.createServer(async (req, res) => {
         payout: 'released',
         milestoneAmount: m.amount,
         reputation: { agent: job.agent, score: next },
+        onchain: {
+          release: onchainRelease,
+          reputation: onchainReputation,
+        },
       });
     }
 
