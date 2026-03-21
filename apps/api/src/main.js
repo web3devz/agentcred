@@ -4,6 +4,7 @@ import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSc
 import { createEscrowJobOnchain, releaseMilestoneOnchain, updateReputationOnchain } from './clients/chain.js';
 import { pinJsonToIpfs } from './clients/pinata.js';
 import { isOpenServConfigured, scoreReceiptWithOpenServ } from './clients/openserv.js';
+import { ensureOpenServWorkflow, runOpenServWorkflow, getOpenServState } from './clients/openserv-platform.js';
 import { verifyDelegation, delegationEnvelope } from './clients/metamask-delegation.js';
 import { statusGaslessConfigured, statusGaslessEnvelope, verifyGaslessRelease, relayGaslessRelease } from './clients/status-gasless.js';
 
@@ -168,7 +169,17 @@ const server = http.createServer(async (req, res) => {
         ok: true,
         integration: 'openserv',
         configured: isOpenServConfigured(),
+        platform: getOpenServState(),
       });
+    }
+
+    if (req.method === 'POST' && pathname === '/integrations/openserv/bootstrap') {
+      try {
+        const st = await ensureOpenServWorkflow();
+        return json(res, 200, { ok: true, integration: 'openserv', state: st });
+      } catch (e) {
+        return json(res, 500, { ok: false, error: String(e.message || e) });
+      }
     }
 
     if (req.method === 'POST' && pathname === '/jobs') {
@@ -354,6 +365,22 @@ const server = http.createServer(async (req, res) => {
       m.score = verdict.score;
       m.verdict = verdict.verdict;
       m.status = verdict.verdict === 'pass' ? 'APPROVED' : 'SUBMITTED';
+
+      if (openserv.configured) {
+        try {
+          const run = await runOpenServWorkflow({
+            title: job.title,
+            summary: m.receipt?.summary || '',
+            logs: m.receipt?.logs || [],
+            receiptHash: m.receipt?.hash,
+            milestoneId,
+            jobId,
+          });
+          openserv.workflowRun = run;
+        } catch (e) {
+          openserv.workflowError = String(e.message || e);
+        }
+      }
 
       return json(res, 200, { jobId, milestoneId, verifier: verdict, openserv, signalScore });
     }
