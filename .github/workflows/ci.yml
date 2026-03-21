@@ -9,8 +9,9 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install deps
-        run: npm ci
+        run: npm ci --workspaces --include-workspace-root
       - name: Web build
         run: NODE_ENV=production npm --workspace @agentcred/web run build
       - name: Full lifecycle E2E

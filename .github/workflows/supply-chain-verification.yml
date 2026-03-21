@@ -21,11 +21,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22.x'
           cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies (lockfile required)
-        run: npm ci
+        run: npm ci --workspaces --include-workspace-root
 
       - name: Test
         run: npm test
