@@ -7,9 +7,10 @@ LABEL org.opencontainers.image.title="AgentCred" \
 
 WORKDIR /app
 
-# Copy full repo first so npm workspaces dependencies (e.g. apps/api) are available during install
+# Copy the full repo so npm workspaces (apps/*, packages/*) can resolve
 COPY . .
-RUN npm ci
+# Use a non-strict install to avoid lockfile mismatch issues in container builds
+RUN npm install --omit=dev
 
 EXPOSE 8443
 ENV NODE_ENV=production

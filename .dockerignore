@@ -1,0 +1,11 @@
+# Exclude unnecessary files from Docker build context
+node_modules
+.git
+.runtime
+coverage
+apps/web/.next
+apps/web/out
+dist
+.DS_Store
+npm-debug.log*
+.swp
