@@ -1,0 +1,59 @@
+{
+  "jobId": 1,
+  "onchainCreate": {
+    "skipped": false,
+    "txHash": "0x60e90e083aa1e228f8582c2644a1853f321b59b5ab551d7a73083c12b1f94cfe",
+    "blockNumber": 39158430,
+    "onchainJobId": 5
+  },
+  "receipt": {
+    "hash": "2ee789483484f34fb7f1c99c598d335a35cbbbd4e24d6318e0e714a7631e58d4",
+    "artifactUrl": "ipfs://manual-proof-artifact",
+    "erc8004": "erc-8004"
+  },
+  "score": {
+    "jobId": 1,
+    "milestoneId": 0,
+    "verifier": {
+      "verdict": "pass",
+      "score": 78,
+      "signedBy": "tee-placeholder",
+      "receiptHash": "2ee789483484f34fb7f1c99c598d335a35cbbbd4e24d6318e0e714a7631e58d4"
+    },
+    "openserv": {
+      "used": true,
+      "configured": true,
+      "score": null,
+      "error": "openserv_error:404:<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /v1/score</pre>\n<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'9dfbe94eb81bcdbc',t:'MTc3NDA4NTE0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>\n</html>\n"
+    },
+    "signalScore": 78
+  },
+  "release": {
+    "jobId": 1,
+    "milestoneId": 0,
+    "payout": "released",
+    "milestoneAmount": 1,
+    "reputation": {
+      "agent": "0x4C92BF08f4672E974dE4dc01806150a977853BfE",
+      "score": 7
+    },
+    "delegation": {
+      "required": false,
+      "checked": false,
+      "ok": null,
+      "error": null
+    },
+    "onchain": {
+      "release": {
+        "skipped": false,
+        "error": "execution reverted: \"not approved\" (action=\"estimateGas\", data=\"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000c6e6f7420617070726f7665640000000000000000000000000000000000000000\", reason=\"not approved\", transaction={ \"data\": \"0xdbaf091000000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000000\", \"from\": \"0x4C92BF08f4672E974dE4dc01806150a977853BfE\", \"to\": \"0xE97aF241cE0c46bc69d6d447D778b5845bDeAE68\" }, invocation=null, revert={ \"args\": [ \"not approved\" ], \"name\": \"Error\", \"signature\": \"Error(string)\" }, code=CALL_EXCEPTION, version=6.16.0)",
+        "onchainJobId": 5
+      },
+      "reputation": {
+        "skipped": false,
+        "txHash": "0x90033e3579f7f5e6d649f2ca4e657bbd5fdc01ed1db57c12b020ed1dfcbbfd10",
+        "blockNumber": 39158437
+      }
+    }
+  }
+}

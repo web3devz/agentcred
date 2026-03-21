@@ -16,8 +16,9 @@
 ## Track-by-track completion gates
 
 ### Base
-- [ ] Onchain create/fund/release flow executed on Base Sepolia
-- [ ] Tx hashes recorded in demo evidence
+- [x] Onchain create flow executed on Base Sepolia
+- [x] Tx hashes recorded in demo evidence (`docs/BASE_STATUS_PROOF.json`)
+- [ ] End-to-end onchain submit+approve+release path needs contract role alignment (current proof includes create + reputation tx)
 
 ### OpenServ
 - [x] OpenServ API key path wired and callable (`/integrations/openserv/health`, scoring hook)
@@ -27,7 +28,7 @@
 - [x] Delegation verification endpoint implemented (`/delegations/verify`)
 - [x] Delegation envelope endpoint implemented (`/delegations/envelope`)
 - [x] Delegated action support added for protected release operation
-- [ ] Collect signed delegation evidence in docs for final submission
+- [x] Signed delegation evidence added (`docs/DELEGATION_EVIDENCE.md`)
 
 ### Protocol Labs (ERC-8004)
 - [x] Receipt payload emitted in ERC-8004 structure
@@ -41,7 +42,7 @@
 - [x] Status gasless intent envelope endpoint (`/status/gasless/envelope`)
 - [x] Status gasless signed execution endpoint (`/status/gasless/release`)
 - [x] Status integration health endpoint (`/integrations/status/health`)
-- [ ] One successful on-network gasless operation captured in evidence
+- [x] Successful on-network gasless operation captured (`docs/STATUS_GASLESS_EVIDENCE.txt`)
 
 ---
 

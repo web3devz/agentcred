@@ -64,8 +64,11 @@ Evidence files:
 - `docs/API_INTEGRATION_EVIDENCE.md`
 - `docs/LIVE_PROOF_EVIDENCE.md`
 - `docs/LIVE_PROOF_EVIDENCE.json`
+- `docs/DELEGATION_EVIDENCE.md`
+- `docs/STATUS_GASLESS_EVIDENCE.txt`
+- `docs/BASE_STATUS_PROOF.json`
 
-> Note: live OpenServ + Pinata proof completed and captured. Status relayer tx hash requires configured Status relayer credentials/network.
+> Note: live Status gasless relay tx captured. Base onchain create + reputation tx captured; full submit+approve+release path depends on contract role alignment on deployed escrow.
 
 ---
 
