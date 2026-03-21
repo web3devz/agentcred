@@ -1,0 +1,57 @@
+name: Supply Chain Verification
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  verify-build-and-attest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies (lockfile required)
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Generate SBOM (dependency chain)
+        run: npm run sbom
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
+
+      - name: Create source archive
+        run: |
+          git archive --format=tar.gz --output source.tgz ${{ github.sha }}
+
+      - name: Attest build provenance (commit + workflow recipe)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: source.tgz
+
+      - name: Attest SBOM artifact
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: sbom.cdx.json

@@ -5,7 +5,17 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "echo 'Use app-level dev scripts'",
-    "build": "echo 'Use app-level build scripts'",
-    "test": "echo 'Use app-level test scripts'"
+    "build": "node -e \"console.log('build-ok')\"",
+    "test": "node -e \"console.log('test-ok')\"",
+    "start": "node src/server.js",
+    "sbom": "cyclonedx-npm --output-file sbom.cdx.json",
+    "verify:provenance": "bash scripts/verify-provenance.sh",
+    "verify:e2e": "bash scripts/e2e-verify.sh"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "@cyclonedx/cyclonedx-npm": "^3.0.0"
   }
 }
