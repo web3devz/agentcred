@@ -109,6 +109,8 @@ async function main() {
   console.log('submitTxHash', subRc.hash);
 
   console.log('approve from', client.address);
+  // Small delay to allow state propagation on some RPCs
+  await new Promise((r) => setTimeout(r, 2000));
   const appTx = await escrow.connect(client).approveMilestone(onchainJobId, 0);
   const appRc = await appTx.wait();
   console.log('approveTxHash', appRc.hash);

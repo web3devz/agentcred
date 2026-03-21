@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 import { createHash } from 'node:crypto';
 import { JobCreateSchema, ReceiptSchema, VerifierRequestSchema, VerifierResultSchema, requireFields } from './contracts.js';
@@ -7,6 +10,12 @@ import { isOpenServConfigured } from './clients/openserv.js';
 import { ensureOpenServWorkflow, runOpenServWorkflow, getOpenServState } from './clients/openserv-platform.js';
 import { verifyDelegation, delegationEnvelope } from './clients/metamask-delegation.js';
 import { statusGaslessConfigured, statusGaslessEnvelope, verifyGaslessRelease, relayGaslessRelease } from './clients/status-gasless.js';
+
+// Load env from current cwd and from repository root when running from app subdirectory.
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
@@ -88,6 +97,16 @@ function allMilestonesReleased(job) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const { pathname } = url;
+
+  res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-methods', 'GET,POST,OPTIONS');
+  res.setHeader('access-control-allow-headers', 'content-type, authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   try {
     if (req.method === 'GET' && pathname === '/health') {
