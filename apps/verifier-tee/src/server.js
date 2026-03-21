@@ -26,4 +26,5 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(404).end();
 });
 
-server.listen(8080, '0.0.0.0', () => console.log('Verifier listening on :8080'));
+const PORT = Number(process.env.PORT || process.env.APP_PORT || 3000);
+server.listen(PORT, '0.0.0.0', () => console.log(`Verifier listening on :${PORT}`));
