@@ -1,4 +1,4 @@
-const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001').replace(/\/$/, '');
+const API = (process.env.NEXT_PUBLIC_API_URL || 'https://agentcredapi-production.up.railway.app').replace(/\/$/, '');
 
 function buildUrl(path: string) {
   if (/^https?:\/\//i.test(path)) return path;
