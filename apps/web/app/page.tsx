@@ -146,7 +146,7 @@ export default function HomePage() {
 
           <div className="stat-ribbon">
             <div className="metric-card pulse-border">
-              <span>Active Jobs</span>
+              <span>Total Jobs</span>
               <b>{cActiveJobs}</b>
             </div>
             <div className="metric-card pulse-border">
