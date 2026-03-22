@@ -1,3 +1,5 @@
+<!-- MARKEE:START:0xeb4ab47407244821e21b558bac2ebf3c5ce427d5 -->
+<!-- MARKEE:END:0xeb4ab47407244821e21b558bac2ebf3c5ce427d5 -->
 # AgentCred — Verifiable Agent Reputation + Escrow Hiring Network
 
 Proof-first autonomous work infrastructure for hiring agents and contributors with escrow discipline, verifiable execution, and onchain reputation.
