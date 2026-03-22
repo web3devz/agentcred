@@ -64,6 +64,28 @@ This lifecycle is exercised in full E2E and recorded in:
 npm ci
 ```
 
+### API endpoint behavior (web)
+- `apps/web` now defaults to the hosted API: `https://agentcredapi-production.up.railway.app`
+- You can still override this with `NEXT_PUBLIC_API_URL`
+
+---
+
+## Recent Production Updates
+
+### 1) Hosted API default in frontend
+- The web app uses Railway API by default, so local UI testing no longer requires a local API process unless you explicitly override `NEXT_PUBLIC_API_URL`.
+
+### 2) Job persistence in API
+- `apps/api` now snapshots in-memory state to disk and reloads it on startup.
+- Default snapshot file:
+	- `data/agentcred-db.json`
+- Optional override:
+	- `AGENTCRED_DATA_FILE=/custom/path/agentcred-db.json`
+
+### 3) Sync behavior note
+- Resync scripts should be treated as migration tools, not periodic jobs.
+- Repeated resync without dedupe can create duplicate jobs in target environments.
+
 ### Security Gateway Verification
 ```bash
 bash tls/gen-dev-certs.sh
