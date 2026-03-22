@@ -4,7 +4,7 @@ Goal: maximize objective score by proving quality, reliability, and trust with v
 
 ## Scoring Intent
 
-Help me get more score by prioritizing proof over claims.
+Prioritize proof over claims.
 Every important statement should be backed by reproducible outputs, API responses, transaction hashes, or logs.
 
 ## What Judges Should Verify
