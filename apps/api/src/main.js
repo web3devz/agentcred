@@ -216,10 +216,14 @@ const server = http.createServer(async (req, res) => {
         id: idx,
         title: m.title || `Milestone ${idx + 1}`,
         amount: Number(m.amount || 0),
-        status: 'PENDING',
-        receipt: null,
-        score: null,
-        verdict: null,
+        status: m.status || 'PENDING',
+        receipt: m.receipt || null,
+        score: m.score || null,
+        verdict: m.verdict || null,
+        completedAt: m.completedAt || null,
+        submittedAt: m.submittedAt || null,
+        approvedAt: m.approvedAt || null,
+        releasedAt: m.releasedAt || null,
       }));
 
       const totalAmount = milestones.reduce((s, m) => s + m.amount, 0);
@@ -232,24 +236,26 @@ const server = http.createServer(async (req, res) => {
         client: body.client,
         agent: body.agent,
         amount: totalAmount,
-        status: 'FUNDED',
+        status: body.status || 'FUNDED',
         milestones,
-        receipt: null,
-        score: null,
-        verdict: null,
-        releasedAt: null,
-        createdAt: new Date().toISOString(),
-        onchain: null,
+        receipt: body.receipt || null,
+        score: body.score || null,
+        verdict: body.verdict || null,
+        releasedAt: body.releasedAt || null,
+        createdAt: body.createdAt || new Date().toISOString(),
+        onchain: body.onchain || null,
       };
 
-      try {
-        const onchain = await createEscrowJobOnchain({
-          agent: body.agent,
-          milestoneAmounts: milestones.map((m) => m.amount),
-        });
-        job.onchain = onchain;
-      } catch (e) {
-        job.onchain = { skipped: false, error: String(e.message || e) };
+      if (!body.onchain) {
+        try {
+          const onchain = await createEscrowJobOnchain({
+            agent: body.agent,
+            milestoneAmounts: milestones.map((m) => m.amount),
+          });
+          job.onchain = onchain;
+        } catch (e) {
+          job.onchain = { skipped: false, error: String(e.message || e) };
+        }
       }
 
       db.jobs.set(id, job);
