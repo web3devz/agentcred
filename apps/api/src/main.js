@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 import { createHash } from 'node:crypto';
@@ -19,6 +20,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const VERIFIER_URL = process.env.VERIFIER_URL || 'http://localhost:8080/verify';
+const DATA_FILE = process.env.AGENTCRED_DATA_FILE || path.resolve(process.cwd(), 'data', 'agentcred-db.json');
 
 const db = {
   jobs: new Map(),
@@ -26,6 +28,47 @@ const db = {
   usedGaslessNonces: new Set(),
   nextJobId: 1,
 };
+
+function persistDb() {
+  try {
+    const payload = {
+      jobs: Array.from(db.jobs.values()),
+      reputation: Array.from(db.reputation.entries()),
+      usedGaslessNonces: Array.from(db.usedGaslessNonces.values()),
+      nextJobId: db.nextJobId,
+      updatedAt: new Date().toISOString(),
+    };
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+    fs.writeFileSync(DATA_FILE, JSON.stringify(payload, null, 2));
+  } catch (e) {
+    console.warn('Failed to persist db snapshot:', String(e.message || e));
+  }
+}
+
+function loadDb() {
+  try {
+    if (!fs.existsSync(DATA_FILE)) return;
+    const raw = fs.readFileSync(DATA_FILE, 'utf8');
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+
+    const loadedJobs = Array.isArray(parsed.jobs) ? parsed.jobs : [];
+    const loadedReputation = Array.isArray(parsed.reputation) ? parsed.reputation : [];
+    const loadedNonces = Array.isArray(parsed.usedGaslessNonces) ? parsed.usedGaslessNonces : [];
+
+    db.jobs = new Map(loadedJobs.map((job) => [Number(job.id), job]));
+    db.reputation = new Map(loadedReputation);
+    db.usedGaslessNonces = new Set(loadedNonces);
+
+    const maxJobId = loadedJobs.reduce((max, job) => Math.max(max, Number(job.id) || 0), 0);
+    db.nextJobId = Math.max(Number(parsed.nextJobId) || 0, maxJobId) + 1;
+    console.log(`Loaded ${loadedJobs.length} jobs from ${DATA_FILE}`);
+  } catch (e) {
+    console.warn('Failed to load db snapshot:', String(e.message || e));
+  }
+}
+
+loadDb();
 
 function json(res, code, data) {
   res.writeHead(code, { 'content-type': 'application/json' });
@@ -168,6 +211,7 @@ const server = http.createServer(async (req, res) => {
       const nonceKey = `${String(envelope.message.user).toLowerCase()}:${envelope.message.nonce}`;
       if (db.usedGaslessNonces.has(nonceKey)) return json(res, 400, { error: 'nonce_already_used' });
       db.usedGaslessNonces.add(nonceKey);
+      persistDb();
 
       const relay = await relayGaslessRelease({
         jobId: envelope.message.jobId,
@@ -259,6 +303,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       db.jobs.set(id, job);
+      persistDb();
       return json(res, 201, job);
     }
 
@@ -338,6 +383,7 @@ const server = http.createServer(async (req, res) => {
       m.receipt = receipt;
       m.status = 'SUBMITTED';
       job.status = 'COMPLETED';
+      persistDb();
 
       return json(res, 200, { jobId, milestoneId, receipt });
     }
@@ -374,6 +420,7 @@ const server = http.createServer(async (req, res) => {
       m.score = verdict.score;
       m.verdict = verdict.verdict;
       m.status = verdict.verdict === 'pass' ? 'APPROVED' : 'SUBMITTED';
+      persistDb();
 
       if (openserv.configured) {
         try {
@@ -457,6 +504,7 @@ const server = http.createServer(async (req, res) => {
       } else {
         job.status = 'FUNDED';
       }
+      persistDb();
 
       return json(res, 200, {
         jobId,

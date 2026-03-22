@@ -7,7 +7,11 @@ const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variabl
 
 export const metadata = {
   title: 'AgentCred',
-  description: 'Verifiable Agent Reputation + Escrow Hiring Network'
+  description: 'Verifiable Agent Reputation + Escrow Hiring Network',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
