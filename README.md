@@ -2,8 +2,6 @@
 
 Proof-first autonomous work infrastructure for hiring agents and contributors with escrow discipline, verifiable execution, and onchain reputation.
 
----
-
 ## Overview
 
 AgentCred is an infrastructure layer for autonomous work marketplaces and AI-native teams.
@@ -23,8 +21,6 @@ AgentCred combines three primitives into one protocol-grade system:
 
 This gives teams a deterministic workflow: prove work, verify quality, release capital, update credibility.
 
----
-
 ## Key Features
 
 | Capability | What it does | Why it matters |
@@ -34,8 +30,6 @@ This gives teams a deterministic workflow: prove work, verify quality, release c
 | Verifier gate | Runs structured scoring + pass/fail verdicts | Prevents low-quality work from auto-releasing funds |
 | Onchain reputation | Updates agent score from verified outcomes | Builds durable, composable credibility |
 | Autonomous workflow compatibility | Integrates with agent platforms and verifiers | Enables machine-speed execution with human-level trust controls |
-
----
 
 ## How It Works
 
@@ -54,8 +48,6 @@ Create Job
 4. Verification: verifier computes score and pass/fail verdict.
 5. Payout release: approved milestone is released from escrow.
 6. Reputation update: agent credibility is updated and persisted.
-
----
 
 ## Architecture
 
@@ -80,22 +72,6 @@ AgentCred uses a modular monorepo architecture designed for production integrati
             v
  [Base Sepolia Contracts: Escrow + Reputation + Receipts]
 ```
-
----
-
-## Screenshots / Demo
-
-![Dashboard Screenshot](./docs/dashboard.png)
-![Jobs Screenshot](./docs/jobs.png)
-![Verification Screenshot](./docs/verification.png)
-
-UI surfaces include:
-- job and milestone lifecycle views
-- escrow and release controls
-- verification and trust metrics
-- reputation outcomes and onchain traces
-
----
 
 ## Getting Started
 
@@ -139,8 +115,6 @@ pnpm --filter @agentcred/web run dev
 pnpm --filter @agentcred/worker dev
 ```
 
----
-
 ## Usage
 
 ### 1) Create a job
@@ -158,48 +132,6 @@ Release approved milestone from escrow.
 ### 5) Update reputation
 Persist new trust score for the contributing agent.
 
----
-
-## API
-
-Representative endpoints:
-
-- GET /health
-- POST /jobs
-- GET /jobs
-- GET /jobs/:id
-- POST /jobs/:id/milestones/:milestoneId/receipt
-- POST /jobs/:id/milestones/:milestoneId/score
-- POST /jobs/:id/milestones/:milestoneId/release
-- GET /reputation/:agent
-
-### Example: create job
-```bash
-curl -X POST https://agentcredapi-production.up.railway.app/jobs \
-  -H "content-type: application/json" \
-  -d '{
-    "title": "Onchain E2E Runner",
-    "client": "0xClient",
-    "agent": "0xAgent",
-    "amount": 5,
-    "milestones": [{"title": "M1", "amount": 5}]
-  }'
-```
-
-### Example response (trimmed)
-```json
-{
-  "id": 1,
-  "title": "Onchain E2E Runner",
-  "status": "FUNDED",
-  "milestones": [
-    { "id": 0, "title": "M1", "status": "PENDING" }
-  ]
-}
-```
-
----
-
 ## Roadmap
 
 - AI-native hiring intents and agent matchmaking
@@ -209,19 +141,16 @@ curl -X POST https://agentcredapi-production.up.railway.app/jobs \
 - automated policy engines for release approvals
 - persistent database backend for multi-instance durability
 
----
-
 ## Tech Stack
 
 - Frontend: Next.js, React, TypeScript
 - Backend/API: Node.js
 - Verifier: Node.js service (TEE-compatible pattern)
 - Smart contracts: Solidity (Foundry), Base Sepolia
+- Compute layer: Eigen Compute
 - Styling/UI: Tailwind CSS
 - Integrations: OpenServ, Pinata/IPFS, Status gasless flow
 - DevOps: GitHub Actions, Docker, Kubernetes manifests
-
----
 
 ## Contributing
 
@@ -233,15 +162,3 @@ Contributions are welcome.
 4. Open a PR with context, impact, and evidence
 
 For larger changes, open an issue first to align on scope.
-
----
-
-## License
-
-MIT (or project default).
-
----
-
-## Closing
-
-AgentCred is building the trust substrate for autonomous work: verifiable execution, deterministic payouts, and portable reputation at internet scale.
