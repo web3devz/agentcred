@@ -93,9 +93,11 @@ export default function HomePage() {
     const totalEscrow = jobs.reduce((s, j) => s + Number(j.amount || 0), 0);
     const releasedJobs = jobs.filter((j) => j.status === 'RELEASED').length;
     const allMilestones = jobs.flatMap((j) => j.milestones || []);
-    const approvedMilestones = allMilestones.filter((m) => m.status === 'APPROVED' || m.status === 'RELEASED').length;
-    const submittedMilestones = allMilestones.filter((m) => !!m.receipt).length;
-    const trustRate = submittedMilestones ? Math.round((approvedMilestones / submittedMilestones) * 100) : 0;
+    const trustedMilestones = allMilestones.filter((m) => m.status === 'APPROVED' || m.status === 'RELEASED').length;
+    const evidencedMilestones = allMilestones.filter(
+      (m) => !!m.receipt || m.status === 'SUBMITTED' || m.status === 'APPROVED' || m.status === 'RELEASED'
+    ).length;
+    const trustRate = evidencedMilestones ? Math.round((trustedMilestones / evidencedMilestones) * 100) : 0;
 
     return {
       totalJobs: jobs.length,
