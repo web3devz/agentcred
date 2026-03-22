@@ -1,159 +1,247 @@
-# AgentCred
+# AgentCred — Verifiable Agent Reputation + Escrow Hiring Network
 
-> **Verifiable Agent Reputation + Escrow Hiring Network**
-
-AgentCred is a trust layer for AI-agent work: clients fund jobs into escrow, agents submit verifiable receipts, a verifier scores outcomes, and payouts + reputation updates happen only after quality checks pass.
-
-Built for hackathon-grade reliability with:
-- **onchain escrow + reputation primitives**
-- **verifiable build provenance (SBOM + attestations)**
-- **secure runtime gateway (TLS 1.3 + mTLS + attestation-bound requests)**
+Proof-first autonomous work infrastructure for hiring agents and contributors with escrow discipline, verifiable execution, and onchain reputation.
 
 ---
 
-## Why AgentCred wins
+## Overview
 
-### 1) Trust by default
-- Funds are controlled by escrow flow, not blind trust.
-- Agent output is tied to receipt artifacts and score evidence.
-- Reputation updates are deterministic from verified outcomes.
+AgentCred is an infrastructure layer for autonomous work marketplaces and AI-native teams.
 
-### 2) Verifiability end-to-end
-- CI produces supply-chain evidence (SBOM + provenance attestations).
-- Runtime can enforce client identity and attestation context.
-- Full-stack E2E flow is executable and reproducible.
+### Why it exists
+Current hiring and agent execution workflows are fragmented:
+- trust is off-platform and subjective
+- payout decisions are often manual and opaque
+- execution evidence is scattered across logs, chats, and tools
+- reputation is siloed and hard to carry across systems
 
-### 3) Real, runnable system
-- API, worker, verifier, web app, contracts, deployment manifests.
-- One-command smoke + E2E scripts included.
+### What makes AgentCred different
+AgentCred combines three primitives into one protocol-grade system:
+- proof-first execution evidence
+- escrow-native milestone payouts
+- verifier-driven quality gates tied to durable reputation
+
+This gives teams a deterministic workflow: prove work, verify quality, release capital, update credibility.
+
+---
+
+## Key Features
+
+| Capability | What it does | Why it matters |
+|---|---|---|
+| Escrow discipline | Locks milestone capital before execution | Enforces payout integrity and reduces counterparty risk |
+| Evidence receipts | Captures artifact URLs, logs, summaries, and receipt hashes | Makes output auditable and portable |
+| Verifier gate | Runs structured scoring + pass/fail verdicts | Prevents low-quality work from auto-releasing funds |
+| Onchain reputation | Updates agent score from verified outcomes | Builds durable, composable credibility |
+| Autonomous workflow compatibility | Integrates with agent platforms and verifiers | Enables machine-speed execution with human-level trust controls |
+
+---
+
+## How It Works
+
+```text
+Create Job
+  -> Fund Escrow
+    -> Submit Evidence Receipt
+      -> Run Verifier Scoring
+        -> Approve + Release Payout
+          -> Update Onchain Reputation
+```
+
+1. Job creation: client defines milestones and allocates budget.
+2. Escrow funding: milestone capital is committed to payout flow.
+3. Evidence submission: agent submits execution artifacts and logs.
+4. Verification: verifier computes score and pass/fail verdict.
+5. Payout release: approved milestone is released from escrow.
+6. Reputation update: agent credibility is updated and persisted.
 
 ---
 
 ## Architecture
 
-- `apps/web` — user-facing app (job lifecycle UI)
-- `apps/api` — orchestration API (jobs, receipts, scoring, releases)
-- `apps/worker` — background processing and queue execution
-- `apps/verifier-tee` — verifier service for score + verdict
-- `contracts/*` — escrow/reputation/receipt registries
-- `src/server.js` — secure gateway (TLS 1.3 + mTLS + attestation header check)
+AgentCred uses a modular monorepo architecture designed for production integration.
+
+### System components
+- Frontend: Next.js app for hiring, jobs, escrow lifecycle, and trust analytics
+- Backend API: Node.js orchestration layer for jobs, receipts, scoring, and release flow
+- Verifier service: TEE-friendly verifier endpoint for deterministic scoring
+- Smart contracts: escrow, receipt registry, and reputation contracts on Base Sepolia
+- Integrations: OpenServ workflows, EigenCompute-ready compute/verifier patterns
+
+### Diagram in text
+```text
+[Client / Agent UI (Next.js)]
+            |
+            v
+ [AgentCred API (Node.js)] -----> [Verifier Service]
+            |
+            +-----> [OpenServ / automation integrations]
+            |
+            v
+ [Base Sepolia Contracts: Escrow + Reputation + Receipts]
+```
 
 ---
 
-## Job Lifecycle
+## Screenshots / Demo
 
-1. **Create + fund job**
-2. **Submit receipt** (`artifactUrl`, summary, logs)
-3. **Score via verifier**
-4. **Approve + release payout**
-5. **Update reputation**
+![Dashboard Screenshot](./docs/dashboard.png)
+![Jobs Screenshot](./docs/jobs.png)
+![Verification Screenshot](./docs/verification.png)
 
-This lifecycle is exercised in full E2E and recorded in:
-- `docs/FULL_E2E_RESULT.json`
+UI surfaces include:
+- job and milestone lifecycle views
+- escrow and release controls
+- verification and trust metrics
+- reputation outcomes and onchain traces
 
 ---
 
-## Quick Start
+## Getting Started
 
 ### Prerequisites
 - Node.js 22+
-- npm
+- npm 10+
+- Base Sepolia RPC access
+- contract addresses + signer keys in environment
 
 ### Install
 ```bash
-npm ci
+npm ci --workspaces --include-workspace-root
 ```
 
-### API endpoint behavior (web)
-- `apps/web` now defaults to the hosted API: `https://agentcredapi-production.up.railway.app`
-- You can still override this with `NEXT_PUBLIC_API_URL`
+### Environment
+Create a .env at repository root (or use your deployment secrets):
 
----
+```dotenv
+NODE_ENV=development
+NEXT_PUBLIC_API_URL=https://agentcredapi-production.up.railway.app
+BASE_SEPOLIA_RPC_URL=...
+PRIVATE_KEY=...
+ONCHAIN_ENABLED=true
+ESCROW_CONTRACT_ADDRESS=...
+REPUTATION_CONTRACT_ADDRESS=...
+RECEIPT_REGISTRY_CONTRACT_ADDRESS=...
+VERIFIER_URL=...
+```
 
-## Recent Production Updates
-
-### 1) Hosted API default in frontend
-- The web app uses Railway API by default, so local UI testing no longer requires a local API process unless you explicitly override `NEXT_PUBLIC_API_URL`.
-
-### 2) Job persistence in API
-- `apps/api` now snapshots in-memory state to disk and reloads it on startup.
-- Default snapshot file:
-	- `data/agentcred-db.json`
-- Optional override:
-	- `AGENTCRED_DATA_FILE=/custom/path/agentcred-db.json`
-
-### 3) Sync behavior note
-- Resync scripts should be treated as migration tools, not periodic jobs.
-- Repeated resync without dedupe can create duplicate jobs in target environments.
-
-### Security Gateway Verification
+### Run locally
 ```bash
-bash tls/gen-dev-certs.sh
-npm run verify:e2e
+npm run dev:api
+npm run dev:web
+npm run dev:worker
 ```
-Expected output:
-- `E2E_VERIFY_OK`
 
-### Full Project E2E
+If your scripts differ, use workspace commands directly:
 ```bash
-bash scripts/full-e2e.sh
+pnpm --filter @agentcred/api dev
+pnpm --filter @agentcred/web run dev
+pnpm --filter @agentcred/worker dev
 ```
-Expected output:
-- `FULL_E2E_OK`
 
 ---
 
-## Trust & Provenance
+## Usage
 
-### Supply-chain verification
-Workflow:
-- `.github/workflows/supply-chain-verification.yml`
+### 1) Create a job
+Define title, client, agent, amount, milestones.
 
-Includes:
-- deterministic install (`npm ci`)
-- test + build
-- SBOM generation
-- provenance attestations
+### 2) Submit receipt evidence
+Attach artifact URL/payload, summary, and logs for milestone proof.
 
-Current status snapshot:
-- `docs/PROVENANCE_STATUS.md`
+### 3) Run verification
+Trigger verifier scoring to get structured score + verdict.
 
-### Runtime transport security
-- TLS 1.3
-- mTLS client auth
-- optional client certificate pinning
-- optional `x-tee-attestation` binding
+### 4) Release payout
+Release approved milestone from escrow.
+
+### 5) Update reputation
+Persist new trust score for the contributing agent.
 
 ---
 
-## Deployment
+## API
 
-Kubernetes manifests:
-- `k8s/deployment.yaml`
-- `k8s/service.yaml`
-- `k8s/secrets.template.yaml`
+Representative endpoints:
 
-Runbook:
-- `docs/DEPLOYMENT_RUNBOOK.md`
+- GET /health
+- POST /jobs
+- GET /jobs
+- GET /jobs/:id
+- POST /jobs/:id/milestones/:milestoneId/receipt
+- POST /jobs/:id/milestones/:milestoneId/score
+- POST /jobs/:id/milestones/:milestoneId/release
+- GET /reputation/:agent
+
+### Example: create job
+```bash
+curl -X POST https://agentcredapi-production.up.railway.app/jobs \
+  -H "content-type: application/json" \
+  -d '{
+    "title": "Onchain E2E Runner",
+    "client": "0xClient",
+    "agent": "0xAgent",
+    "amount": 5,
+    "milestones": [{"title": "M1", "amount": 5}]
+  }'
+```
+
+### Example response (trimmed)
+```json
+{
+  "id": 1,
+  "title": "Onchain E2E Runner",
+  "status": "FUNDED",
+  "milestones": [
+    { "id": 0, "title": "M1", "status": "PENDING" }
+  ]
+}
+```
 
 ---
 
-## Hackathon Submission Assets
+## Roadmap
 
-- `docs/SUBMISSION_READY.md` — judge-ready bundle
-- `docs/PROVENANCE_STATUS.md` — workflow evidence
-- `docs/FULL_E2E_RESULT.json` — full-stack execution proof
+- AI-native hiring intents and agent matchmaking
+- idempotent migration + dedupe-safe sync pipelines
+- richer verifier policies (domain-specific scoring profiles)
+- deeper onchain reputation attestations and portability
+- automated policy engines for release approvals
+- persistent database backend for multi-instance durability
 
 ---
 
-## Security Notes
+## Tech Stack
 
-- Never commit live secrets or private keys.
-- Use `.env.example` as baseline.
-- Prefer short-lived credentials and rotate leaked tokens immediately.
+- Frontend: Next.js, React, TypeScript
+- Backend/API: Node.js
+- Verifier: Node.js service (TEE-compatible pattern)
+- Smart contracts: Solidity (Foundry), Base Sepolia
+- Styling/UI: Tailwind CSS
+- Integrations: OpenServ, Pinata/IPFS, Status gasless flow
+- DevOps: GitHub Actions, Docker, Kubernetes manifests
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+1. Fork and create a feature branch
+2. Make focused changes with clear commit messages
+3. Validate with build/tests/E2E where relevant
+4. Open a PR with context, impact, and evidence
+
+For larger changes, open an issue first to align on scope.
 
 ---
 
 ## License
 
 MIT (or project default).
+
+---
+
+## Closing
+
+AgentCred is building the trust substrate for autonomous work: verifiable execution, deterministic payouts, and portable reputation at internet scale.
