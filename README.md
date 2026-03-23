@@ -1,7 +1,7 @@
 <!-- MARKEE:START:0xeb4ab47407244821e21b558bac2ebf3c5ce427d5 -->
 > 🪧🪧🪧🪧🪧🪧🪧 MARKEE 🪧🪧🪧🪧🪧🪧🪧
 >
-> I love this project. Such a wining project.
+> I truly love this project—it stands out as a remarkable and well-executed piece of work. It has all the qualities of a winning project, combining strong vision, thoughtful design, and impressive execution.
 >
 >  — 0xandrue
 >
