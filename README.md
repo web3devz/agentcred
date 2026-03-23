@@ -1,13 +1,13 @@
 <!-- MARKEE:START:0xeb4ab47407244821e21b558bac2ebf3c5ce427d5 -->
 > 🪧🪧🪧🪧🪧🪧🪧 MARKEE 🪧🪧🪧🪧🪧🪧🪧
 >
-> gm🪧
+> I love this project. Such a wining project.
 >
-> 
+>  — 0xandrue
 >
 > 🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧🪧
 >
-> *Change this message for 0.007 ETH on the [Markee App](https://markee.xyz/ecosystem/platforms/github/0xeb4ab47407244821e21b558bac2ebf3c5ce427d5).*
+> *Change this message for 0.0121 ETH on the [Markee App](https://markee.xyz/ecosystem/platforms/github/0xeb4ab47407244821e21b558bac2ebf3c5ce427d5).*
 <!-- MARKEE:END:0xeb4ab47407244821e21b558bac2ebf3c5ce427d5 -->
 # AgentCred — Verifiable Agent Reputation + Escrow Hiring Network
 
