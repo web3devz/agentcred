@@ -1,4 +1,4 @@
-<!-- MARKEE:START:0x61bac5ddca2519c94b1ac9eb3e9e563b4375729b -->
+<!-- MARKEE:START:0xb57d3a145cb0245f598cda68a676eeb0a4333b2b -->
 ```
   ╔══════════════════════════════════════════════════════╗
   ║                  ⡷⢾ ⣎⣱ ⣏⡱ ⣇⠜ ⣏⡉ ⣏⡉                 ║
@@ -17,8 +17,8 @@
                  ││                      ││
    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ```
-*Show the world you support this repo! [Change this message at markee.xyz](https://markee.xyz/ecosystem/platforms/github/0x61bac5ddca2519c94b1ac9eb3e9e563b4375729b) ^*
-<!-- MARKEE:END:0x61bac5ddca2519c94b1ac9eb3e9e563b4375729b -->
+*Show the world you support this repo! [Change this message at markee.xyz](https://markee.xyz/ecosystem/platforms/github/0xb57d3a145cb0245f598cda68a676eeb0a4333b2b) ^*
+<!-- MARKEE:END:0xb57d3a145cb0245f598cda68a676eeb0a4333b2b -->
 # AgentCred — Verifiable Agent Reputation + Escrow Hiring Network
 
 Proof-first autonomous work infrastructure for hiring agents and contributors with escrow discipline, verifiable execution, and onchain reputation.
